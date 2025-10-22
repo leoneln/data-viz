@@ -1,0 +1,70 @@
+---
+title: "Hands On Exercise 2"
+author: "Leonel Nieto"
+format: pdf
+editor: visual
+---
+
+## `ggplot` Aesthetic mappings
+
+```{r}
+?ggplot2::mpg
+```
+
+Recall that the variable `disp` in the mpg data set is the engine's displacement in litters and hwy is the highway miles per gallon. In the graph below we can see that some cars have higher mileage than we would expect. Outlines of sort. How may we explain these cars and the reason for the unusual high mileage?
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+##This code is from our previous exercise where we start with ggplot function, pass in the MPG dataset, layer in the point chart with aesthetics set to displacement on the x axis and highway efficiency on the y axis. 
+```
+
+One way maybe to look at the `class` variable of the mpg data set which describes the type of car. We can see that the compact and subcompact cars have the largest mean highway miles per gallon.
+
+```{r}
+mpg |> 
+  group_by(class) %>%
+  summarize(mean_hwy = mean(hwy,na.rm =TRUE))
+# this codes is levering the pipe operator. Previously the pipe operator was passes in with %>% and now you'll see R coders use |>. The pipe operator takes the object on its left-hand side (LHS) and passes it as the first argument to the function on its right-hand side. This is meant to improve readability of code. In case we take the mpg dataset and pass it to the group by function as its first argument, then pass that to the sumarize function. Without the pipe argument the code would look like this.
+summarize(group_by(mpg, class), mean_hwy = mean(hwy, na.rm = TRUE))
+```
+
+We can leverage aesthetics to bring the `class` variable into our plot and gain a better understanding as what `class` of cars those outliers may be. An aesthetic is a visual property of the objects in your plot. Aesthetics include things like the size, the shape, or the color of your points. You can display a point (like the one below) in different ways by changing the values of its aesthetic properties. Our goal is to convey information about the data by mapping the aesthetics in the plot to variables in the data. Lets map the colors of the scatterplot to the `class` variable.
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, colour = class))
+```
+
+Note that `gggplot` automatically assigns colors to points, this process is known as scaling. A legend will also be added. A now with this information we know that the outliers we saw with high miliage are 2 seater sports cars.
+
+There are other types of aesthetics you can map to data points. For example below we map the class to the size aesthetics.
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, size = class))
+```
+
+> We get a warning here, because mapping an unordered variable (class) to an ordered aesthetic (size) is not a good idea.
+
+We can also set the aesthetic property of the geom manually. For example, we can make all the points red in our plot with the following function. When this is done the color does not convey information about the variable but instead it changes the appearance of the plot. **The aesthetic must be applied to the geom function not the aestheic function.**
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), color = "red")
+```
+
+## Bar Charts
+
+Lets create a bar chart to show the number of cars in the data set by manaufacturer.
+
+```{r}
+ggplot(data = mpg) +
+  geom_bar(mapping = aes(y=manufacturer))
+```
+
+Notice that we did not specify that we wanted to count the number of cars per manufacturer in our code. Many graphs like scatterplots plot the raw values of the data. Bar charts calculate the new values that the chart needs. Bar charts, histograms, and frequency polygons bin your data and then plot bin counts, the number of points that fall in each bin. Smoothers fit a model to your data and then plot predictions from the model. Boxplots compute summary of the distribution and then display a formatted box.
+
+```{r}
+diamonds
+```

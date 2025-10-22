@@ -1,0 +1,90 @@
+---
+title: "Hands On Exercise 1: Data Visualization with R"
+author: "Leonel Nieto"
+format: pdf
+editor: visual
+---
+
+## Quarto
+
+Quarto is an open-source, multi-language authoring system that allows users to create dynamic, interactive documents, reports, and presentations. In R, Quarto seamlessly integrates with R Markdown, enabling users to combine code, output, and narrative in a single document. It is particularly useful for creating reproducible data visualizations, as it supports a wide range of plotting libraries, including **ggplot2** and **plotly**. With Quarto, you can create visually appealing reports that automatically update based on your data, making it a powerful tool for both static and interactive data visualizations. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+#| label: code_block_1
+two = 1+1
+print(two)
+
+ten = 2*5
+print(ten)
+
+d = Sys.date()
+cat(d)
+```
+
+```{r}
+#| label: chunk_2
+library(ggplot2)
+```
+
+You can add options to executable code like this
+
+```{r code_chunk_2}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+## Introduction
+
+This lab will teach you how to visualize data using ggplot2. R has several libraries for making graphs but ggplot2 is one of the most easy to use and implements the **Grammar of Graphics** idea, a coherent system for describing and building graphs. Check out this link to learn more about the theoretical underpinnings of the grammar of graphics. <http://vita.had.co.nz/papers/layered-grammar.pdf>. In summary, the grammar of graphics, as implemented in R's ggplot2 library, is a structured framework for constructing data visualizations by layering components. It breaks down a plot into a set of independent building blocks, such as **data**, **aesthetics** (mapping variables to visual properties like x, y, color, or size), **geoms** (geometric objects like points, lines, or bars), **scales** (controls for mapping data to aesthetics), **facets** (for creating multi-panel plots), and **themes** (for customizing non-data elements). This modular approach allows users to create complex and customizable visualizations by combining these elements in a coherent and flexible manner.
+
+## Prerequisites
+
+In this course we will focus on the basics of R and ggplot2. ggplot2 is part of tidyvers, The tidyverse is an collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures. Install the complete tidyverse collection with the following code.
+
+```{r code_chunk_3}
+#install.packages("tidyverse")
+library(tidyverse)
+library(ggplot2)
+```
+
+## What is relationship between engine size and fuel consumption?
+
+We are going to create a data viz to answer this question using a data frame called mpg. This data frame is included in the ggplot library (`ggplot2:mpg`). The data frame is tabular collection of variables or columns and observations or rows. It contains observations collected by the US Environmental Protection Agency on 38 models of cars.
+
+```{r code_chunk_4}
+mpg
+```
+
+Among the columns in the data frame in mpg are:
+
+-   `displ`, the size of a car's engine in liters
+-   `hwy`, a car's miles per gallon efficiency on a highway. The higher the number the more efficient a car is as it travels a grater distance with a gallon of fuel.
+
+To learn more about mpg, open its help page by running `?ggplot2::mpg`.
+
+## Creating a ggplot
+
+To plot the data frame mpg, run the code below. The code creates a plot where `disp` is on the x-axis and `hwy` is on the y-axis;
+
+```{r code_chunk_5}
+ggplot(mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) 
+```
+
+The plot shows a negative relationship between engine size (`displ`) and fuel efficiency (`hwy`). In other words, cars with big engines use more fuel. Does this confirm or refute our hypothesis about fuel efficiency and engine size?
+
+With `ggplot2`, you begin a plot with the function `ggplot()`. `ggplot()` creates a coordinate system that you can add layers to. The first argument of `ggplot()` is the data to use in the graph. So `ggplot(data = mpg)` creates an empty graph, but it’s not very interesting.
+
+You complete your graph by adding one or more layers to `ggplot()`. The function `geom_point()` adds a layer of points to your plot, which creates a scatterplot. `ggplot2` comes with many geom functions that each add a different type of layer to a plot.
+
+Each geom function in `ggplot2` takes a mapping argument. This defines how variables in the data are mapped to visual properties. The mapping argument is always paired with `aes()`, and the x and y arguments of `aes()` specify which variables to map to the x and y axes. `ggplot2` looks for the mapped variables in the data argument, in this case, mpg.
+
+```{r code_chunk_6}
+ggplot(data = mpg)
+```
