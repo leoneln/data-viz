@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Art & Science of Data Visualization: Discussion Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh; /* Full viewport height */
+            overflow: hidden; /* Prevents vertical scroll on the body */
+            font-family: 'Inter', sans-serif;
+            background-color: #111827;
+            color: #e5e7eb;
+            /* Flex column layout for the whole page */
+            display: flex;
+            flex-direction: column;
+        }
+        #slider-container {
+            width: 100vw;
+            flex-grow: 1; /* Slider takes up all available space */
+            height: 1px; /* Flex-grow trick for height */
+            display: flex;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        .slide {
+            width: 100vw;
+            height: 100%; /* Slide fills the slider-container's height */
+            flex-shrink: 0;
+            scroll-snap-align: start;
+            display: flex;
+            align-items: center; /* Vertically center the card */
+            justify-content: center; /* Horizontally center the card */
+            padding: 1rem;
+            position: relative;
+        }
+        .card {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            width: 100%;
+            max-width: 5xl; /* Constrained max-width */
+            /* REMOVED: height: 100%; */
+            max-height: 90vh; /* Max height smaller than slide padding */
+            overflow-y: auto; /* Scroll if content is taller than max-height */
+            padding: 1.5rem;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .text-header {
+            color: #60a5fa;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .text-accent-bad {
+            color: #f87171;
+        }
+        .text-accent-good {
+            color: #60a5fa;
+        }
+        .text-accent-line {
+            color: #f87171;
+        }
+        .discussion-prompt {
+            border-left: 5px solid #60a5fa;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            background-color: #111827;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #d1d5db;
+        }
+        @media (min-width: 768px) {
+            .discussion-prompt {
+                font-size: 1.1rem;
+            }
+        }
+        .discussion-prompt strong {
+            color: #60a5fa;
+        }
+        .arrow {
+            font-size: 2rem;
+            line-height: 1;
+            color: #60a5fa;
+            margin: 0 0.5rem;
+        }
+        .chart-clutter-bg {
+            background: linear-gradient(45deg, #1f2937 0%, #374151 100%);
+            border: 1px dashed #4b5563;
+        }
+        
+        /* --- Navigation Bar Styles --- */
+        #navigation-bar {
+            width: 100%;
+            background-color: #111827;
+            border-top: 1px solid #374151;
+            padding: 0.75rem 1rem;
+            flex-shrink: 0; /* Don't let it shrink */
+            z-index: 50;
+        }
+        #navigation-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 5xl; /* Match the card width */
+            margin: 0 auto;
+        }
+        .nav-button {
+            background-color: #60a5fa;
+            color: #111827;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            min-width: 110px; /* Ensure text is visible */
+            text-align: center;
+        }
+        .nav-button:hover {
+            transform: scale(1.05);
+            background-color: #93c5fd;
+        }
+        .nav-button.hidden {
+            visibility: hidden; /* Use visibility to maintain layout */
+        }
+
+        #nav-dots {
+            display: flex;
+            gap: 0.75rem;
+            padding: 0 1rem; /* Add spacing */
+        }
+        .dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+            background-color: #4b5563; /* Inactive */
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .dot.active {
+            background-color: #60a5fa; /* Active */
+        }
+    </style>
+</head>
+<body>
+
+    <main id="slider-container">
+        
+        <!-- Slide 1: Introduction & Tension -->
+        <section class="slide">
+            <div class="card">
+                <header class="text-center my-4 md:my-8">
+                    <h1 class="text-4xl md:text-5xl text-header mb-4">The Art & Science of Data Visualization</h1>
+                    <p class="text-xl md:text-2xl text-gray-400">A Discussion Guide: Balancing Beauty and Insight for Business & Information Systems</p>
+                </header>
+                <div class="text-center p-6 bg-gray-900 rounded-lg">
+                    <p class="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">
+                        We've all seen stunning visualizations. But does <strong>"beautiful"</strong> always mean <strong>"insightful"</strong>? This field lives at the intersection of two powerful disciplines: the rigorous <span class="font-bold text-accent-good">Science of Truth</span> and the expressive <span class="font-bold text-accent-line">Art of Storytelling</span>.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 2: The Science -->
+        <section class="slide">
+            <div class="card">
+                <h2 class="text-3xl text-header mb-4">The Science: The Foundation of Truth</h2>
+                <p class="text-lg text-gray-300 mb-6">
+                    The <strong>"science"</strong> is the non-negotiable foundation rooted in statistics and cognitive psychology. It dictates accuracy and comprehension. Get this wrong, and the visualization fails, no matter how beautiful. Key principles include choosing the right chart, maintaining data integrity, and maximizing clarity.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="flex flex-col items-center">
+                        <h3 class="text-xl font-semibold text-accent-bad mb-2">DON'T: Form Over Function (Misleading)</h3>
+                        <p class="text-center text-gray-400 mb-4">This chart distorts perception. The perspective makes 'Category B' look larger than 'Category A', even though it is smaller. This is scientifically dishonest.</p>
+                        <div class="chart-container">
+                            <canvas id="chartScienceBad"></canvas>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <h3 class="text-xl font-semibold text-accent-good mb-2">DO: Data Integrity & Clarity (Accurate)</h3>
+                        <p class="text-center text-gray-400 mb-4">This standard bar chart correctly shows that 'Category A' is larger than 'Category B'. The Y-axis starts at 0, ensuring an accurate, honest comparison.</p>
+                        <div class="chart-container">
+                            <canvas id="chartScienceGood"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="discussion-prompt">
+                    <strong>Discussion Prompt (The Science):</strong> As future business leaders and information system professionals, how critical is the <strong>perceived objectivity</strong> of data visualization? Discuss the ethical implications for decision-making and stakeholder trust when visualizations, even unintentionally, violate scientific principles like data integrity. Can a "beautiful lie" be more dangerous than an "ugly truth" in a corporate or analytical context?
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 3: The Art -->
+        <section class="slide">
+            <div class="card">
+                <h2 class="text-3xl text-header mb-4">The Art: The Amplifier of Meaning</h2>
+                <p class="text-lg text-gray-300 mb-6">
+                    The <strong>"art"</strong> is the human layer that transforms a correct chart into a compelling story. This isn't decoration; it's <strong>functional art</strong>. It uses purposeful aesthetics like color, layout, and typography to guide the user, establish a narrative, and make the insight memorable.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="flex flex-col items-center">
+                        <h3 class="text-xl font-semibold text-gray-400 mb-2">Correct, But Lacks Focus</h3>
+                        <p class="text-center text-gray-400 mb-4">This chart is scientifically accurate, but all trends compete for attention. It's not clear what we're supposed to see. Where is the story?</p>
+                        <div class="chart-container">
+                            <canvas id="chartArtBad"></canvas>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <h3 class="text-xl font-semibold text-accent-good mb-2">Artful, Focused, & Insightful</h3>
+                        <p class="text-center text-gray-400 mb-4">Here, art serves science. By using a single, purposeful accent color, the chart instantly guides our eye to the key trend, telling a clear story about "Our Growth".</p>
+                        <div class="chart-container">
+                            <canvas id="chartArtGood"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="discussion-prompt">
+                    <strong>Discussion Prompt (The Art):</strong> Consider a dashboard you’ve encountered in a professional setting. How effectively did its <strong>"artistic"</strong> elements (color palette, layout, typography) guide your attention and enhance the narrative? Discuss how strategic aesthetic choices can influence <strong>perceived urgency</strong> or <strong>opportunity</strong> in a business context, and how to balance this persuasive power with objective reporting.
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 4: The Pitfall -->
+        <section class="slide">
+            <div class="card">
+                <h2 class="text-3xl text-header mb-4">The Pitfall: When the 'Wow' Fades</h2>
+                <p class="text-lg text-gray-300 mb-6">
+                    The "awe moment" fades when a chart is beautiful but not engaging. This happens when art overshadows science, prioritizing novelty over understanding. The user spends all their energy trying to <strong>read</strong> the chart, with no energy left to <strong>understand</strong> the data.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="flex flex-col items-center">
+                        <h3 class="text-xl font-semibold text-accent-good mb-4">The Path to Disengagement</h3>
+                        <div class="flex flex-col items-center space-y-2 w-full max-w-sm mx-auto">
+                            <div class="p-4 bg-gray-700 rounded-lg shadow-sm border border-gray-600 w-full text-center">
+                                <span class="text-lg font-semibold text-gray-200">1. Beautiful, Complex Chart</span>
+                            </div>
+                            <span class="arrow font-bold">&darr;</span>
+                            <div class="p-4 bg-gray-700 rounded-lg shadow-sm border border-gray-600 w-full text-center">
+                                <span class="text-lg font-semibold text-gray-200">2. Initial "Wow!" Moment</span>
+                            </div>
+                            <span class="arrow font-bold">&darr;</span>
+                            <div class="p-4 bg-gray-700 rounded-lg shadow-sm border border-gray-600 w-full text-center">
+                                <span class="text-lg font-semibold text-gray-200">3. User Tries to Get Insight</span>
+                            </div>
+                            <span class="arrow font-bold">&darr;</span>
+                            <div class="p-4 bg-red-900 bg-opacity-30 rounded-lg shadow-sm border border-red-700 w-full text-center">
+                                <span class="text-lg font-semibold text-red-300">4. Confusion: Form Obscures Function</span>
+                            </div>
+                            <span class="arrow text-accent-bad font-bold">&darr;</span>
+                            <div class="p-4 bg-red-900 bg-opacity-30 rounded-lg shadow-sm border border-red-700 w-full text-center">
+                                <span class="text-lg font-semibold text-red-300">5. Engagement Fades</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <h3 class="text-xl font-semibold text-accent-bad mb-4">Cluttered Chart Junk: Data Lost in Noise</h3>
+                        <p class="text-center text-gray-400 mb-4">This 3D percent bar chart is overloaded with unnecessary elements: busy background, redundant legend, distracting patterns, and a distorted 3D perspective. The actual data points are hard to discern amidst the visual clutter.</p>
+                        <div class="chart-container chart-clutter-bg">
+                            <canvas id="chartJunk"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="discussion-prompt">
+                    <strong>Discussion Prompt (The Pitfall):</strong> In a competitive business environment, there can be pressure to create "flashy" reports or dashboards that impress stakeholders, even if they sacrifice clarity. How do you, as an information system specialist or business analyst, push back against the creation of "chart junk" when it's requested by a manager or client? What are the long-term costs of prioritizing initial "awe" over sustained "understanding" in data communication?
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 5: The Goal -->
+        <section class="slide">
+            <div class="card p-10 md:p-16 text-center border-blue-400 border-2">
+                <h2 class="text-3xl text-header mb-4">The Goal: Elegant Efficiency</h2>
+                <p class="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
+                    The best visualizations are a seamless synthesis. They are efficient and clear. The <strong>"art"</strong> is in service of the <strong>"science."</strong> The beauty isn't the complexity, it's the profound clarity.
+                </p>
+                <div class="bg-gray-900 text-blue-400 rounded-lg p-8 shadow-inner border border-gray-700">
+                    <span class="block text-3xl md:text-5xl font-bold">"Wow... I get it!"</span>
+                </div>
+                <div class="discussion-prompt text-left">
+                    <strong>Discussion Prompt (The Goal):</strong> Considering your role in an organization, what are your top 2-3 considerations to achieve <strong>"Elegant Efficiency"</strong> for your specific audience (e.g., C-suite, operations team, clients)? How do you measure if a visualization has truly led to that "Wow... I get it!" moment versus just a fleeting impression?
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 6: Key References -->
+        <section class="slide">
+            <div class="card p-10 md:p-16">
+                <h2 class="text-3xl text-header mb-8 text-center">Key References & Further Reading</h2>
+                <p class="text-lg text-gray-300 mb-8 max-w-3xl mx-auto">
+                    The concepts in this discussion are built upon the work of many brilliant practitioners. For those interested in diving deeper, these books are foundational to the field of data visualization.
+                </p>
+                <ul class="space-y-6 max-w-3xl mx-auto text-lg text-gray-300">
+                    <li class="flex items-start gap-4">
+                        <span class="text-blue-400 font-bold mt-1">&#10148;</span>
+                        <div>
+                            <strong>Edward R. Tufte.</strong> <em>The Visual Display of Quantitative Information.</em>
+                            <p class="text-sm text-gray-400 mt-1">The foundational text on data integrity, chart junk, and the science of graphical display.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <span class="text-blue-400 font-bold mt-1">&#10148;</span>
+                        <div>
+                            <strong>Stephen Few.</strong> <em>Show Me the Numbers: Designing Tables and Graphs to Enlighten.</em>
+                            <p class="text-sm text-gray-400 mt-1">A practical, business-focused guide on choosing the right charts for the right data.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <span class="text-blue-400 font-bold mt-1">&#10148;</span>
+                        <div>
+                            <strong>Cole Nussbaumer Knaflic.</strong> <em>Storytelling with Data: A Data Visualization Guide for Business Professionals.</em>
+                            <p class="text-sm text-gray-400 mt-1">An essential guide on the "art" of using data to create compelling narratives.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <span class="text-blue-400 font-bold mt-1">&#10148;</span>
+                        <div>
+                            <strong>Alberto Cairo.</strong> <em>The Functional Art: An Introduction to Information Graphics and Visualization.</em>
+                            <p class="text-sm text-gray-400 mt-1">An excellent exploration of the balance between aesthetics (art) and function (science).</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Navigation Bar Container -->
+    <nav id="navigation-bar">
+        <div id="navigation-controls">
+            <div id="prev-btn" class="nav-button">&larr; Previous</div>
+            <div id="nav-dots"></div>
+            <div id="next-btn" class="nav-button">Next &rarr;</div>
+        </div>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Chart.js Setup ---
+            const accentBlue = '#60a5fa'; // Blue from your site
+            const accentCyan = '#22d3ee'; // Cyan secondary
+            const accentRed = '#f87171'; // Red for "bad" elements
+            const accentPurple = '#a78bfa'; // Purple for cluttered chart junk
+            const accentGray = '#9ca3af'; // Gray for subdued elements
+            const gridColor = '#4b5563'; // Darker gray for grid
+            const textColor = '#e5e7eb'; // Light text color
+
+            Chart.defaults.color = textColor;
+            Chart.defaults.borderColor = gridColor;
+
+            function processLabels(labels) {
+                return labels.map(label => {
+                    if (typeof label === 'string' && label.length > 16) {
+                        const words = label.split(' ');
+                        const newLabel = [];
+                        let line = '';
+                        words.forEach(word => {
+                            if ((line + ' ' + word).length > 16) {
+                                newLabel.push(line);
+                                line = word;
+                            } else {
+                                line = (line === '' ? word : line + ' ' + word);
+                            }
+                        });
+                        newLabel.push(line);
+                        return newLabel;
+                    }
+                    return label;
+                });
+            }
+
+            const tooltipTitleCallback = {
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) {
+                                    return label.join(' ');
+                                } else {
+                                    return label;
+                                }
+                            },
+                             label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.x !== null && context.chart.options.indexAxis === 'y') { // For horizontal bar
+                                    label += context.parsed.x + '%';
+                                } else if (context.parsed.y !== null) { // For line/vertical bar
+                                    label += context.parsed.y;
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            };
+
+            const barLabels = processLabels(['Category A', 'Category B']);
+
+            if (document.getElementById('chartScienceBad')) {
+                new Chart(document.getElementById('chartScienceBad'), {
+                    type: 'bar',
+                    data: {
+                        labels: barLabels,
+                        datasets: [{
+                            label: 'Value',
+                            data: [100, 80],
+                            backgroundColor: [accentRed, accentGray],
+                            borderWidth: 0,
+                            barPercentage: 0.8,
+                            categoryPercentage: 0.7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        ...tooltipTitleCallback,
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                grid: { display: false },
+                                ticks: { color: textColor, font: { size: 14 } }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: textColor, font: { size: 14 } }
+                            }
+                        },
+                        plugins: {
+                            ...tooltipTitleCallback.plugins,
+                            legend: { display: false }
+                        }
+                    }
+                });
+                
+                const chartBad = Chart.getChart('chartScienceBad');
+                if (chartBad) {
+                    chartBad.options.scales.y.min = 50; 
+                    chartBad.update();
+                }
+            }
+
+            if (document.getElementById('chartScienceGood')) {
+                new Chart(document.getElementById('chartScienceGood'), {
+                    type: 'bar',
+                    data: {
+                        labels: barLabels,
+                        datasets: [{
+                            label: 'Value',
+                            data: [100, 80],
+                            backgroundColor: [accentBlue, accentCyan],
+                            borderWidth: 0,
+                            barPercentage: 0.8,
+                            categoryPercentage: 0.7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        ...tooltipTitleCallback,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: gridColor },
+                                ticks: { color: textColor, font: { size: 14 } }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: textColor, font: { size: 14 } }
+                            }
+                        },
+                        plugins: {
+                            ...tooltipTitleCallback.plugins,
+                            legend: { display: false }
+                        }
+                    }
+                });
+            }
+
+            const lineLabels = processLabels(['Q1', 'Q2', 'Q3', 'Q4']);
+            const lineData = {
+                labels: lineLabels,
+                datasets: [
+                    {
+                        label: 'Competitor A',
+                        data: [45, 50, 60, 62],
+                        borderColor: accentGray,
+                        backgroundColor: 'transparent',
+                        tension: 0.3,
+                        borderWidth: 2
+                    },
+                    {
+                        label: 'Competitor B',
+                        data: [30, 42, 48, 55],
+                        borderColor: accentGray,
+                        backgroundColor: 'transparent',
+                        tension: 0.3,
+                        borderWidth: 2
+                    },
+                    {
+                        label: 'Our Growth',
+                        data: [20, 35, 60, 80],
+                        borderColor: accentGray,
+                        backgroundColor: 'transparent',
+                        tension: 0.3,
+                        borderWidth: 2
+                    }
+                ]
+            };
+
+            if (document.getElementById('chartArtBad')) {
+                new Chart(document.getElementById('chartArtBad'), {
+                    type: 'line',
+                    data: JSON.parse(JSON.stringify(lineData)),
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        ...tooltipTitleCallback,
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor } },
+                            x: { grid: { display: false }, ticks: { color: textColor } }
+                        },
+                        plugins: {
+                            ...tooltipTitleCallback.plugins,
+                            legend: { position: 'bottom', labels: { color: textColor } }
+                        }
+                    }
+                });
+            }
+
+            if (document.getElementById('chartArtGood')) {
+                const goodLineData = JSON.parse(JSON.stringify(lineData));
+                goodLineData.datasets[2].borderColor = accentBlue;
+                goodLineData.datasets[2].borderWidth = 4;
+
+                new Chart(document.getElementById('chartArtGood'), {
+                    type: 'line',
+                    data: goodLineData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        ...tooltipTitleCallback,
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor } },
+                            x: { grid: { display: false }, ticks: { color: textColor } }
+                        },
+                        plugins: {
+                            ...tooltipTitleCallback.plugins,
+                            legend: { position: 'bottom', labels: { color: textColor } }
+                        }
+                    }
+                });
+            }
+
+            if (document.getElementById('chartJunk')) {
+                new Chart(document.getElementById('chartJunk'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Actual Data', 'Chart Junk'],
+                        datasets: [{
+                            label: 'Percentage',
+                            data: [30, 70], // Actual Data: 30%, Chart Junk: 70%
+                            backgroundColor: [
+                                'rgba(96, 165, 250, 0.8)', // Actual Data - semi-transparent blue
+                                'rgba(248, 113, 113, 0.8)' // Chart Junk - semi-transparent red
+                            ],
+                            borderColor: [
+                                accentBlue,
+                                accentRed
+                            ],
+                            borderWidth: 2,
+                            borderRadius: 5,
+                            barPercentage: 0.7,
+                            categoryPercentage: 0.6
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y', // Make it a horizontal bar chart
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        ...tooltipTitleCallback,
+                        layout: {
+                            padding: {
+                                left: 10,
+                                right: 10,
+                                top: 20,
+                                bottom: 10
+                            }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                max: 100,
+                                title: {
+                                    display: true,
+                                    text: 'Percentage of Visual Space (%)',
+                                    color: accentPurple,
+                                    font: { size: 14, weight: 'bold' }
+                                },
+                                grid: {
+                                    color: 'rgba(167, 139, 250, 0.3)', // Light purple grid lines
+                                    borderDash: [5, 5]
+                                },
+                                ticks: {
+                                    color: textColor,
+                                    callback: function(value) { return value + '%'; }
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    color: textColor,
+                                    font: { size: 14, weight: 'bold' }
+                                }
+                            }
+                        },
+                        plugins: {
+                            ...tooltipTitleCallback.plugins,
+                            title: {
+                                display: true,
+                                text: 'The Overwhelmed Insight Report (Highly Confidential)', // Cluttered, formal title
+                                color: accentPurple,
+                                font: { size: 18, style: 'italic' }
+                            },
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: accentPurple,
+                                    font: { size: 12, weight: 'bold' },
+                                    boxWidth: 20,
+                                    boxHeight: 10
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // --- Slider Navigation JS ---
+            const slider = document.getElementById('slider-container');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const dotsContainer = document.getElementById('nav-dots');
+            const slides = document.querySelectorAll('.slide');
+            const numSlides = slides.length;
+
+            if (!slider || !prevBtn || !nextBtn || !dotsContainer) return; // Guard clause
+
+            // Create dots
+            for (let i = 0; i < numSlides; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                dot.dataset.index = i;
+                dotsContainer.appendChild(dot);
+            }
+
+            const dots = document.querySelectorAll('.dot');
+            if (dots.length > 0) {
+                dots[0].classList.add('active'); // Set first dot active
+            }
+
+            // Update dots based on scroll position
+            function updateNav() {
+                const slideWidth = slider.clientWidth;
+                if (slideWidth === 0) return; // Avoid division by zero on load
+                const currentSlide = Math.round(slider.scrollLeft / slideWidth);
+
+                // Update dots
+                dots.forEach((dot, index) => {
+                    if (index === currentSlide) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+
+                // Update buttons (using 'hidden' class)
+                if (currentSlide === 0) {
+                    prevBtn.classList.add('hidden');
+                } else {
+                    prevBtn.classList.remove('hidden');
+                }
+
+                if (currentSlide === numSlides - 1) {
+                    nextBtn.classList.add('hidden');
+                } else {
+                    nextBtn.classList.remove('hidden');
+                }
+            }
+
+            // Button clicks
+            prevBtn.addEventListener('click', () => {
+                slider.scrollBy({ left: -slider.clientWidth, behavior: 'smooth' });
+            });
+
+            nextBtn.addEventListener('click', () => {
+                slider.scrollBy({ left: slider.clientWidth, behavior: 'smooth' });
+            });
+
+            // Dot clicks
+            dots.forEach(dot => {
+                dot.addEventListener('click', (e) => {
+                    const index = parseInt(e.target.dataset.index);
+                    slider.scrollTo({
+                        left: slider.clientWidth * index,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Listen for scroll events on the slider
+            slider.addEventListener('scroll', updateNav, { passive: true });
+            
+            // Handle window resize
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                const slideWidth = slider.clientWidth;
+                const currentSlide = Math.round(slider.scrollLeft / slideWidth);
+                slider.scrollTo({ left: slideWidth * currentSlide, behavior: 'auto' });
+                
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(updateNav, 100);
+            });
+
+            // Initial call to set state
+            setTimeout(updateNav, 100);
+
+        });
+    </script>
+</body>
+</html>
+
