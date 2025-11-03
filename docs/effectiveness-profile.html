@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Visualization Effectiveness Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'primary': '#0D1B2A',
+              'secondary': '#1B263B',
+              'accent-blue': '#415A77',
+              'accent-light': '#778DA9',
+              'accent-white': '#E0E1DD',
+              'accent-green': '#10B981',
+              'accent-red': '#EF4444',
+              'accent-orange': '#F59E0B',
+              'light-bg': '#F7FAFC',
+              'dark-gray': '#4B5563',
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            animation: {
+              'bounce-slow': 'bounce 3s infinite',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+      
+      html, body {
+        height: 100%;
+        overflow: hidden;
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+      }
+      
+      .scroll-container {
+        height: 100vh;
+        width: 100%;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+      }
+      
+      .scroll-section {
+        height: 100vh;
+        width: 100%;
+        scroll-snap-align: start;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        box-sizing: border-box;
+      }
+      
+      .content-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 0.75rem;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        padding: 2rem;
+        max-width: 90vw;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+
+      @media (min-width: 768px) {
+        .content-card {
+          padding: 3rem;
+          max-width: 1000px;
+        }
+      }
+      
+      .bg-grad-1 {
+        background-image: linear-gradient(135deg, #0D1B2A 0%, #415A77 100%);
+        background-attachment: fixed;
+      }
+      .bg-grad-2 {
+        background-image: linear-gradient(135deg, #1B263B 0%, #415A77 100%);
+        background-attachment: fixed;
+      }
+      .bg-grad-3 {
+        background-image: linear-gradient(135deg, #415A77 0%, #778DA9 100%);
+        background-attachment: fixed;
+      }
+      .bg-grad-4 {
+        background-image: linear-gradient(135deg, #778DA9 0%, #E0E1DD 100%);
+        background-attachment: fixed;
+      }
+      
+      .chart-container {
+        position: relative;
+        width: 100%;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        height: 300px;
+        max-height: 350px;
+      }
+
+      @media (min-width: 768px) {
+        .chart-container {
+            height: 350px;
+            max-height: 400px;
+        }
+      }
+
+      .treemap-sim {
+        @apply p-1 text-white font-bold text-xs;
+      }
+      .treemap-sim-lg {
+        @apply p-2 text-white font-bold text-sm;
+      }
+    </style>
+</head>
+<body class="bg-primary">
+
+    <div class="scroll-container">
+
+        <section class="scroll-section bg-grad-1">
+            <div class="content-card text-center">
+                <h1 class="text-4xl md:text-6xl font-bold text-primary mb-4">The Data Visualization Effectiveness Profile</h1>
+                <p class="text-xl md:text-2xl text-accent-blue mb-6">A Student's Guide to Evaluating Visualizations<br>(Based on Stephen Few)</p>
+                <p class="text-lg text-dark-gray">Use this guide to critique visualizations for your assignment. Scroll to begin.</p>
+                <div class="mt-8 text-accent-blue animate-bounce-slow">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
+                </div>
+            </div>
+        </section>
+        
+        <section class="scroll-section bg-grad-2">
+            <div class="content-card">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary text-center">The Two Core Categories</h2>
+                <p class="text-lg text-dark-gray mb-6 text-center max-w-3xl mx-auto">Stephen Few's framework is built on two simple questions. A visualization must be <span class="font-bold">Informative</span>. It <strong>can</strong> also be <span class="font-bold">Emotive</span>.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-primary text-white p-6 rounded-lg shadow-lg">
+                        <h3 class="text-2xl font-bold text-accent-white mb-3">1. Informative (The "Must-Have")</h3>
+                        <p class="text-accent-light text-base">Does the visualization produce the <strong>right understanding</strong>? This category is your primary focus. It includes 5 criteria:
+                        <ul class="list-disc list-inside mt-4 space-y-1">
+                            <li>Usefulness</li>
+                            <li>Completeness</li>
+                            <li>Perceptibility</li>
+                            <li>Truthfulness</li>
+                            <li>Intuitiveness</li>
+                        </ul>
+                        </p>
+                    </div>
+                    <div class="bg-accent-blue text-white p-6 rounded-lg shadow-lg">
+                        <h3 class="text-2xl font-bold text-accent-white mb-3">2. Emotive (The "Nice-to-Have")</h3>
+                        <p class="text-accent-light text-base">Does the visualization produce a <strong>useful emotional response</strong>? This is about how the chart <strong>feels</strong> and its ability to draw you in. It includes 2 criteria:
+                        <ul class="list-disc list-inside mt-4 space-y-1">
+                            <li>Aesthetics</li>
+                            <li>Engagement</li>
+                        </ul>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="scroll-section bg-grad-3">
+            <div class="content-card">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary text-center">Informative Criteria: The "Why" & "What"</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-primary">
+                        <span class="text-5xl">🎯</span>
+                        <h3 class="text-2xl font-semibold my-2">1. Usefulness</h3>
+                        <p class="text-sm font-semibold text-dark-gray">Useless ‹<span class="text-primary font-bold">---</span>› Very Useful</p>
+                        <p class="text-base text-dark-gray mt-3">This is the most fundamental question. Does this visualization <strong>matter</strong> to its intended audience? Does it help them make a decision or understand something important? A perfectly designed chart about useless data is still a failed visualization.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-primary">
+                        <span class="text-5xl">🧩</span>
+                        <h3 class="text-2xl font-semibold my-2">2. Completeness</h3>
+                        <p class="text-sm font-semibold text-dark-gray">No relevant data ‹<span class="text-primary font-bold">---</span>› All relevant data</p>
+                        <p class="text-base text-dark-gray mt-3">Does the chart provide all the information needed for understanding, but no more? Data rarely means anything in isolation. Completeness usually requires <span class="font-bold">context</span>, such as a comparison to a target, a historical trend, or an average.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="scroll-section bg-grad-3">
+            <div class="content-card">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary text-center">Informative: 3. Perceptibility</h2>
+                <p class="text-lg text-center text-dark-gray mb-6">Is the information <strong>easy for the human brain to perceive</strong>? This is all about choosing the right chart for the job. Our brains are great at comparing length (bar charts) but terrible at comparing area (pie charts).</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-xl font-semibold text-center text-accent-red">POOR PERCEPTIBILITY</h4>
+                        <p class="text-center text-dark-gray mb-2">Treemaps & Pie Charts use area, which is hard to compare accurately.</p>
+                        <div class="w-full h-64 max-w-sm mx-auto border-2 border-primary bg-dark-gray flex text-white mt-4">
+                            <div class="w-2/3 h-full flex flex-col">
+                                <div class="h-1/2 flex">
+                                    <div class="w-1/3 treemap-sim bg-red-400">A</div>
+                                    <div class="w-2/3 treemap-sim bg-blue-400">B</div>
+                                </div>
+                                <div class="h-1/2 treemap-sim bg-green-500">C</div>
+                            </div>
+                            <div class="w-1/3 h-full flex flex-col">
+                                <div class="h-1/4 treemap-sim bg-yellow-500">D</div>
+                                <div class="h-1/4 treemap-sim bg-gray-500">E</div>
+                                <div class="h-1/2 treemap-sim-lg bg-indigo-500">F</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-center text-accent-green">HIGH PERCEPTIBILITY</h4>
+                        <p class="text-center text-dark-gray mb-2">Bar charts use length on a common baseline, which is clear and precise.</p>
+                        <div class="chart-container h-64 mt-4">
+                            <canvas id="chartPerceptible"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="scroll-section bg-grad-3">
+            <div class="content-card">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary text-center">Informative: 4. Truthfulness</h2>
+                <p class="text-lg text-center text-dark-gray mb-6">Is the visualization accurate and valid? A bar chart with a Y-axis that doesn't start at zero is <span class="font-bold text-accent-red">untruthful</span> because it visually lies about the proportions.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-xl font-semibold text-center text-accent-red">UNTRUTHFUL (Truncated Axis)</h4>
+                        <p class="text-center text-dark-gray mb-2">This chart makes Jan look tiny and Jun look massive. The visual lie exaggerates the change.</p>
+                        <div class="chart-container h-64">
+                            <canvas id="chartTruthBad"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-center text-accent-green">TRUTHFUL (Axis at Zero)</h4>
+                        <p class="text-center text-dark-gray mb-2">This is the <strong>honest</strong> view. The variation is small. A line chart is also a better choice for time-series data.</p>
+                        <div class="chart-container h-64">
+                            <canvas id="chartTruthGood"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="scroll-section bg-grad-3">
+            <div class="content-card">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary text-center">Informative: 5. Intuitiveness</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-primary">
+                        <span class="text-5xl">🧠</span>
+                        <h3 class="text-2xl font-semibold my-2">Intuitiveness</h3>
+                        <p class="text-sm font-semibold text-dark-gray">Unfamiliar & Difficult ‹<span class="text-primary font-bold">---</span>› Familiar & Easy</p>
+                        <p class="text-base text-dark-gray mt-3">Is the chart familiar and easy for its <strong>specific audience</strong> to understand? A bar chart is familiar to almost everyone. A parallel coordinates plot is familiar to some scientists but would be <span class="font-bold">unintuitive</span> for a general business audience.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-primary">
+                        <span class="text-5xl">💡</span>
+                        <h3 class="text-2xl font-semibold my-2">The Trade-Off</h3>
+                        <p class="text-base text-dark-gray mt-3">Sometimes, a less intuitive chart (like Minard's famous map) is necessary because it's the <strong>only</strong> way to show complex data (the `Completeness` criterion). In these cases, the chart fails on intuitiveness but may be the most effective choice <strong>if</strong> the audience is willing to learn how to read it.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="scroll-section bg-grad-4">
+            <div class="content-card">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary text-center">Emotive Criteria: The "Feel"</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-accent-blue">
+                        <span class="text-5xl">🎨</span>
+                        <h3 class="text-2xl font-semibold my-2">6. Aesthetics</h3>
+                        <p class="text-sm font-semibold text-dark-gray">Ugly ‹<span class="text-primary font-bold">---</span>› Pleasing ‹<span class="text-primary font-bold">---</span>› Beautiful</p>
+                        <p class="text-base text-dark-gray mt-3">You don't need to be an artist. A "pleasing" aesthetic is usually achieved by <strong>simplicity</strong>. Remove clutter, use a clean font, use a thoughtful color palette, and give the content space to breathe. An ugly chart (like a default Excel 3D pie) can repel users.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-accent-blue">
+                        <span class="text-5xl">🧲</span>
+                        <h3 class="text-2xl font-semibold my-2">7. Engagement</h3>
+                        <p class="text-sm font-semibold text-dark-gray">Distracts from data ‹<span class="text-primary font-bold">---</span>› Draws one into data</p>
+                        <p class="text-base text-dark-gray mt-3">This is the most misunderstood criterion. Engagement is <strong>not</strong> chart junk or flashy 3D effects. Those are <span class="font-bold text-accent-red">distractions</span>. True engagement <strong>draws the user into the data</strong> and makes them <strong>want</strong> to understand. A clean, perceptible, and truthful chart that highlights a key insight is highly engaging.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="scroll-section bg-grad-4">
+            <div class="content-card">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary text-center">Case Study: Engagement vs. Distraction</h2>
+                <p class="text-lg text-center text-dark-gray mb-6">Let's evaluate the "Billion Pound-O-Gram." The original treemap was novel, but its engagement <strong>distracted</strong> from the data. The redesigned bar chart <strong>engages</strong> by making the data clear.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-xl font-semibold text-center text-accent-red">DISTRACTING (Fails Perceptibility)</h4>
+                        <p class="text-center text-dark-gray mb-2">The "Billion Pound-O-Gram" treemap simulation. It's eye-catching but impossible to compare values.</p>
+                        <div class="w-full h-64 max-w-sm mx-auto border-2 border-primary bg-dark-gray flex text-white mt-4">
+                            <div class="w-2/3 h-full flex flex-col">
+                                <div class="h-1/2 flex">
+                                    <div class="w-1/3 treemap-sim bg-red-400">Pensions</div>
+                                    <div class="w-2/3 treemap-sim bg-blue-400">Tesco</div>
+                                </div>
+                                <div class="h-1/2 treemap-sim bg-green-500">Personal Wealth</div>
+                            </div>
+                            <div class="w-1/3 h-full flex flex-col">
+                                <div class="h-1/4 treemap-sim bg-yellow-500">Bailout</div>
+                                <div class="h-1/4 treemap-sim bg-gray-500">Lloyds</div>
+                                <div class="h-1/2 treemap-sim-lg bg-indigo-500">Budget Deficit</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-center text-accent-green">TRULY ENGAGING (Passes)</h4>
+                        <p class="text-center text-dark-gray mb-2">Few's Redesign. It's "engaging" because it's clear. The <span class="text-accent-orange font-bold">orange</span> bar highlights the key insight.</p>
+                        <div class="chart-container h-64 mt-4">
+                            <canvas id="chartRedesign"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="scroll-section bg-grad-1">
+            <div class="content-card text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-primary mb-6">Assignment Checklist</h2>
+                <p class="text-lg text-dark-gray mb-6 max-w-3xl mx-auto">Use these 7 questions to form your group's evaluation. Remember: Focus on the "Informative" criteria first! A "pretty" dashboard that is untruthful or unclear is a failed dashboard.</p>
+                <ul class="list-none text-left max-w-2xl mx-auto space-y-3">
+                    <li><span class="text-primary font-bold text-xl mr-3">1. Usefulness:</span> Does the visualization have a clear purpose and audience? What decision does it support?</li>
+                    <li><span class="text-primary font-bold text-xl mr-3">2. Completeness:</span> Does it provide necessary context (like comparisons, targets, or history)?</li>
+                    <li><span class="text-primary font-bold text-xl mr-3">3. Perceptibility:</span> Is it the <strong>right chart type</strong> for the data? (e.g., bar vs. pie, line vs. bar).</li>
+                    <li><span class="text-primary font-bold text-xl mr-3">4. Truthfulness:</span> Is it accurate? Does the Y-axis start at 0? Is it free of 3D distortion?</li>
+                    <li><span class="text-primary font-bold text-xl mr-3">5. Intuitiveness:</span> Is it simple and easy to understand for its <strong>intended</strong> audience?</li>
+                    <li><span class="text-primary font-bold text-xl mr-3">6. Aesthetics:</span> Is it clean, uncluttered, and pleasing? Or is it a "chart junk" nightmare?</li>
+                    <li><span class="text-primary font-bold text-xl mr-3">7. Engagement:</span> Does it use design (e.g., color) to <strong>highlight key insights</strong> and draw you into the <strong>data</strong>? Or does it just distract?</li>
+                </ul>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+        
+            function wrapLabels(label) {
+              if (typeof label === 'string' && label.length > 16) {
+                const words = label.split(' ');
+                const lines = [];
+                let currentLine = '';
+                words.forEach(word => {
+                  if ((currentLine + word).length > 16 && currentLine.length > 0) {
+                    lines.push(currentLine.trim());
+                    currentLine = word + ' ';
+                  } else {
+                    currentLine += word + ' ';
+                  }
+                });
+                lines.push(currentLine.trim());
+                return lines;
+              }
+              return label;
+            }
+
+            const tooltipTitleCallback = (context) => {
+              const item = context[0];
+              let label = item.chart.data.labels[item.dataIndex];
+              if (Array.isArray(label)) {
+                return label.join(' ');
+              }
+              return label;
+            };
+
+            const chartData = {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                data: [85, 88, 87, 92, 90, 95]
+            };
+
+            const chartTruthBadCtx = document.getElementById('chartTruthBad');
+            if(chartTruthBadCtx) {
+                new Chart(chartTruthBadCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: chartData.labels,
+                        datasets: [{
+                            label: 'Performance',
+                            data: chartData.data,
+                            backgroundColor: '#EF4444',
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            tooltip: { callbacks: { title: tooltipTitleCallback } },
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                min: 80,
+                                max: 100,
+                                ticks: { color: '#0D1B2A', font: { size: 12 } },
+                                grid: { color: '#778DA9' }
+                            },
+                            x: {
+                                ticks: { color: '#0D1B2A', font: { size: 12 } },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const chartTruthGoodCtx = document.getElementById('chartTruthGood');
+            if(chartTruthGoodCtx) {
+                new Chart(chartTruthGoodCtx, {
+                    type: 'line',
+                    data: {
+                        labels: chartData.labels,
+                        datasets: [{
+                            label: 'Performance',
+                            data: chartData.data,
+                            borderColor: '#10B981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            tooltip: { callbacks: { title: tooltipTitleCallback } },
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: { color: '#0D1B2A', font: { size: 12 } },
+                                grid: { color: '#E0E1DD' }
+                            },
+                            x: {
+                                ticks: { color: '#0D1B2A', font: { size: 12 } },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const chartPerceptibleCtx = document.getElementById('chartPerceptible');
+            if (chartPerceptibleCtx) {
+                new Chart(chartPerceptibleCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['A', 'B', 'C', 'D', 'E', 'F'],
+                        datasets: [{
+                            label: 'Value',
+                            data: [12, 19, 30, 5, 8, 22],
+                            backgroundColor: ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#6b7280', '#6366f1'],
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            tooltip: { callbacks: { title: tooltipTitleCallback } },
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { color: '#0D1B2A' } },
+                            x: { ticks: { color: '#0D1B2A' } }
+                        }
+                    }
+                });
+            }
+
+            const chartRedesignCtx = document.getElementById('chartRedesign');
+            if (chartRedesignCtx) {
+                new Chart(chartRedesignCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Bailout: Asset Purchasing', 'Personal Wealth', 'Bailout: Banks', 'Bailout: Cash', 'Budget Deficit', 'Food Yearly', 'Income Tax'].map(wrapLabels),
+                        datasets: [{
+                            label: 'Billions of Pounds',
+                            data: [400, 393, 289, 200, 175, 160, 152],
+                            backgroundColor: ['#778DA9', '#778DA9', '#778DA9', '#778DA9', '#F59E0B', '#778DA9', '#778DA9'],
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: 'y',
+                        plugins: {
+                            tooltip: { callbacks: { title: tooltipTitleCallback } },
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { ticks: { color: '#0D1B2A', font: { size: 10 } }, grid: { display: false } },
+                            x: { ticks: { color: '#0D1B2A', font: { size: 12 } }, grid: { color: '#E0E1DD' } }
+                        }
+                    }
+                });
+            }
+
+        });
+    </script>
+</body>
+</html>
+

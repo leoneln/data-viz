@@ -1,174 +1,297 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth" style="scroll-padding-top: 6rem;">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Visualization: Welcome</title>
-    <!-- Load Tailwind CSS -->
+    <title>Data Visualization Course</title>
+    <!-- Tailwind & Chart.js -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Load Inter font from Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- 
-    Reference site for styling: https://leonieto.website/#/Resume
-    This page mimics the dark theme, teal/cyan accents, and two-column layout.
-    -->
-
-    <style>
-        /* Apply Inter font */
-        body {
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* Custom scrollbar for a more modern feel */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #2d3748; /* gray-800 */
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #4a5568; /* gray-600 */
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #718096; /* gray-500 */
-        }
-    </style>
-
     <script>
-        // Configuration for Tailwind CSS (optional, but good for defining custom theme)
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        // Using colors inspired by the reference site
-                        teal: {
-                            '400': '#4db6ac', // A teal accent
-                            '500': '#00c7b0', // A brighter teal
-                        },
-                        gray: {
-                            '850': '#1f2023', // A custom dark gray
-                            '900': '#1a1a1a', // Main dark background
-                        }
-                    }
-                }
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'primary': '#0D1B2A',
+              'secondary': '#1B263B',
+              'accent-blue': '#415A77',
+              'accent-light': '#778DA9',
+              'accent-white': '#E0E1DD',
+              'accent-green': '#10B981',
+              'accent-red': '#EF4444',
+              'accent-orange': '#F59E0B',
+              'light-bg': '#F7FAFC',
+              'dark-gray': '#4B5563',
+              'teal-400': '#4db6ac',
+              'teal-500': '#00c7b0',
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            animation: {
+              'bounce-slow': 'bounce 3s infinite',
             }
+          }
         }
+      }
     </script>
-</head>
-<body class="bg-gray-900 text-gray-200">
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+      
+      html, body {
+        height: 100%;
+        overflow: hidden;
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+      }
+      
+      /* Master scroll container for the whole site */
+      .scroll-container {
+        height: 100vh;
+        width: 100%;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        scroll-behavior: smooth;
+        scroll-padding-top: 3.5rem; 
+      }
+      
+      /* A single full-screen "page" */
+      .scroll-section {
+        height: 100vh;
+        width: 100%;
+        scroll-snap-align: start;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem 1rem; /* More padding for mobile */
+        box-sizing: border-box;
+      }
+      
+      /* The white "card" that holds the content */
+      .content-card {
+        background: rgba(255, 255, 255, 0.98);
+        color: #1a1a1a; /* Dark text on white card */
+        backdrop-filter: blur(10px);
+        border-radius: 0.75rem;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        padding: 1.5rem; /* Reduced padding for smaller cards */
+        width: 100%;
+        max-width: 90vw;
+        max-height: 90vh;
+        overflow-y: auto; /* Re-enabled auto overflow just in case, but content is split to avoid it */
+      }
+      
+      /* Ensure text inside cards is dark */
+      .content-card p, 
+      .content-card li,
+      .content-card h1,
+      .content-card h2,
+      .content-card h3,
+      .content-card h4,
+      .content-card strong {
+        color: #1f2937;
+      }
+      /* ADDED: Override for dark boxes inside cards */
+      .content-card .bg-primary p,
+      .content-card .bg-primary li,
+      .content-card .bg-accent-blue p,
+      .content-card .bg-accent-blue li {
+        color: #E0E1DD; /* accent-white, good contrast on both */
+      }
+      .content-card .text-gray-300,
+      .content-card .text-gray-400 {
+        color: #4b5563;
+      }
 
-    <!-- Sticky Header - Mimics the style of the reference site -->
-    <header class="sticky top-0 z-50 w-full bg-gray-900/80 backdrop-blur-md border-b border-gray-700/50">
-        <nav class="max-w-6xl mx-auto px-6 py-4">
-            <div class="flex justify-start items-center">
-                <!-- You can replace "Leo Nieto" with your name -->
-                <span class="text-xl font-bold text-white">Leo Nieto</span>
-                <span class="text-xl font-light text-gray-400 mx-2">/</span>
-                <span class="text-xl font-semibold text-teal-400">Data Visualization</span>
-            </div>
+      @media (min-width: 768px) {
+        .scroll-section {
+            padding: 2rem;
+        }
+        .content-card {
+          padding: 2rem 3rem; /* Taller padding for desktop */
+          max-width: 1100px;
+        }
+      }
+      
+      /* Backgrounds from effectiveness-profile.html */
+      .bg-grad-1 {
+        background-image: linear-gradient(135deg, #0D1B2A 0%, #415A77 100%);
+        background-attachment: fixed;
+      }
+      .bg-grad-2 {
+        background-image: linear-gradient(135deg, #1B263B 0%, #415A77 100%);
+        background-attachment: fixed;
+      }
+      .bg-grad-3 {
+        background-image: linear-gradient(135deg, #415A77 0%, #778DA9 100%);
+        background-attachment: fixed;
+      }
+      .bg-grad-4 {
+        background-image: linear-gradient(135deg, #778DA9 0%, #E0E1DD 100%);
+        background-attachment: fixed;
+      }
+      
+      /* Chart container for responsiveness */
+      .chart-container {
+        position: relative;
+        width: 100%;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        height: 250px; /* Reduced height to fit on screens */
+        max-height: 300px;
+      }
+
+      @media (min-width: 768px) {
+        .chart-container {
+            height: 300px;
+            max-height: 350px;
+        }
+      }
+
+      .treemap-sim {
+        @apply p-1 text-white font-bold text-xs;
+      }
+      .treemap-sim-lg {
+        @apply p-2 text-white font-bold text-sm;
+      }
+
+      /* New Breadcrumb Styles */
+      .breadcrumb {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #4B5563; /* dark-gray */
+      }
+      .breadcrumb a {
+        color: #415A77; /* accent-blue */
+        transition: color 0.2s ease;
+      }
+      .breadcrumb a:hover {
+        color: #1B263B; /* secondary */
+        text-decoration: underline;
+      }
+      .breadcrumb span.divider {
+        margin: 0 0.5rem;
+      }
+      .breadcrumb span.current {
+        color: #1f2937;
+        font-weight: 700;
+      }
+
+
+      /* Styles for Art/Science section card */
+      .art-science-card h2 {
+        color: #415A77; /* accent-blue */
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .art-science-card .discussion-prompt {
+        border-left: 5px solid #415A77; /* accent-blue */
+        padding: 1rem;
+        margin-top: 1.5rem;
+        background-color: #f7fafc; /* light-bg */
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #4b5563; /* dark-gray */
+      }
+      .art-science-card .discussion-prompt strong {
+        color: #1B263B; /* secondary */
+      }
+      .art-science-card .text-accent-bad { color: #EF4444; }
+      .art-science-card .text-accent-good { color: #10B981; }
+      .art-science-card .arrow {
+        font-size: 2rem;
+        line-height: 1;
+        color: #415A77; /* accent-blue */
+        margin: 0 0.5rem;
+      }
+      .art-science-card .chart-clutter-bg {
+        background: linear-gradient(45deg, #e0e1dd 0%, #f7fafc 100%);
+        border: 1px dashed #778da9;
+      }
+    </style>
+</head>
+<body class="bg-primary">
+
+    <!-- ADDED: Sticky Header -->
+    <header class="sticky top-0 z-50 w-full bg-primary/90 backdrop-blur-md border-b border-secondary/50">
+        <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center space-x-4 sm:space-x-8 h-14 items-center overflow-x-auto">
+            <a href="#welcome" class="text-gray-300 hover:text-accent-white shrink-0 px-2 py-1 text-sm font-medium rounded-md">Overview</a>
+            <a href="#setup-intro" class="text-gray-300 hover:text-accent-white shrink-0 px-2 py-1 text-sm font-medium rounded-md">Setup</a>
+            <a href="#art-intro" class="text-gray-300 hover:text-accent-white shrink-0 px-2 py-1 text-sm font-medium rounded-md">Art & Science</a>
+            <a href="#effectiveness" class="text-gray-300 hover:text-accent-white shrink-0 px-2 py-1 text-sm font-medium rounded-md">Effectiveness</a>
         </nav>
     </header>
+    <!-- END: Sticky Header -->
 
-    <!-- Main Content Area with Two-Column Layout -->
-    <div class="max-w-6xl mx-auto flex flex-col lg:flex-row lg:space-x-12 px-6 md:px-10 py-10">
-        
-        <!-- Left Column: Sticky Navigation -->
-        <aside class="lg:w-1/3 mb-10 lg:mb-0">
-            <div class="sticky top-24"> <!-- top-24 accounts for sticky header height -->
-                <h2 class="text-2xl font-bold text-white mb-5">Course Navigation</h2>
-                
-                <!-- Link to Setup Page -->
-                <a href="data-viz-setup.html" class="block w-full text-center lg:text-left bg-teal-500 text-gray-900 font-bold px-6 py-3 rounded-lg shadow-lg hover:bg-teal-400 transition-colors mb-8">
-                    Setup Instructions (Start Here)
-                </a>
 
-                <nav>
-                    <ul class="space-y-3">
-                        <li>
-                            <a href="#introduction" class="text-lg text-gray-400 hover:text-teal-400 transition-colors">
-                                Course Introduction
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#description" class="text-lg text-gray-400 hover:text-teal-400 transition-colors">
-                                Course Description
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#outcomes" class="text-lg text-gray-400 hover:text-teal-400 transition-colors">
-                                Learning Outcomes
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#materials" class="text-lg text-gray-400 hover:text-teal-400 transition-colors">
-                                Course Materials
-                            </a>
-                        </li>
-                        <li>
-                            <a href="data-viz-art-science.html" class="text-lg text-gray-400 hover:text-teal-400 transition-colors">
-                                Discussion: Art and Science
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </aside>
+    <!-- Master Scroll Container -->
+    <div class="scroll-container">
 
-        <!-- Right Column: Main Content -->
-        <main class="lg:w-2/3">
+        <!-- 
+          PARENT SECTION 1: COURSE OVERVIEW
+        -->
 
-            <!-- Page Title -->
-            <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-6">
-                Welcome to Data Visualization
-            </h1>
-           
-            <!-- Course Introduction -->
-            <section id="introduction" class="mb-12">
-                <h2 class="text-3xl font-bold text-white mb-6 border-b-2 border-teal-500/70 pb-2">
-                    Course Introduction
-                </h2>
-                <div class="space-y-5 text-gray-300 text-lg">
+        <!-- 1.1 Welcome -->
+        <section id="welcome" class="scroll-section bg-grad-1">
+            <div class="content-card">
+                <div class="breadcrumb mb-4">
+                  <span class="current">Course Overview</span>
+                  <span class="divider">&gt;</span>
+                  <span>Course Introduction</span>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-primary mb-4">
+                    Welcome to Data Visualization
+                </h1>
+                <div class="space-y-4 text-dark-gray md:text-lg">
                     <p>
                         Data Visualization is both an art and a science. It's the graphical representation of information, but it's also about transforming complex data into compelling narratives that capture attention and ignite action. This course delves into the power of data visualization to unlock insights from overwhelming datasets. You'll learn how to leverage the creativity of design principles alongside the accuracy of data analysis to craft effective visualizations that resonate with your audience.
                     </p>
                     <p>
-                        This course equips you with the skills to transform raw data into clear, concise, and impactful stories. Through a blend of theory and hands-on application, you'll embark on a journey to uncover the stories hidden within your data sets. You'll master the art of design principles to craft aesthetically pleasing and informative visualizations that resonate with your audience. Finally, you'll learn the science of clear communication, ensuring your data visualizations are understood and actionable by diverse audiences.
-                    </p>
-                    <p>
-                        By the end of this course, you'll be equipped to transform raw data into clear, concise, and impactful stories that drive informed decision-making.
+                        This course equips you with the skills to transform raw data into clear, concise, and impactful stories. Through a blend of theory and hands-on application, you'll learn to uncover the stories hidden within your data sets.
                     </p>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- Course Description -->
-            <section id="description" class="mb-12">
-                <h2 class="text-3xl font-bold text-white mb-6 border-b-2 border-teal-500/70 pb-2">
+        <!-- 1.2 Course Description -->
+        <section id="description" class="scroll-section bg-grad-1">
+            <div class="content-card">
+                <div class="breadcrumb mb-4">
+                  <a href="#welcome">Course Overview</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">Course Description</span>
+                </div>
+                <h2 class="text-3xl font-bold text-accent-blue mb-6 border-b-2 border-accent-blue/70 pb-2">
                     Course Description
                 </h2>
-                <div class="space-y-5 text-gray-300 text-lg">
+                <div class="space-y-5 text-dark-gray md:text-lg">
                     <p>
-                        Data Visualization is the graphical representation of information. Data Visualization and related technologies create value within organizations by providing insight from complex sets of data by communicating key aspects therefrom. This course focuses on how to increase the likelihood of action based on insights from data by telling stories with data that leverage effective Data Visualizations. The course includes a mix of theory and hands-on application using the latest data visualization technologies and techniques.
+                        Data Visualization creates value from complex data enabling insight, influence, and persuation. This course focuses on how to increase the likelihood of action based on insights from data by levering effective Data Visualizations techniques and best practices. The course includes a mix of theory and hands-on application using the latest data visualization technologies and techniques. Students will have a basic introduciton to Python, R, Power BI, and Tableau. Students will also learn about data visualization concepts such as preattentive attributes, and Gestalt principles of perception. 
                     </p>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- Learning Outcomes -->
-            <section id="outcomes" class="mb-12">
-                <h2 class="text-3xl font-bold text-white mb-6 border-b-2 border-teal-500/70 pb-2">
+        <!-- 1.3 Learning Outcomes -->
+        <section id="outcomes" class="scroll-section bg-grad-1">
+            <div class="content-card">
+                <div class="breadcrumb mb-4">
+                  <a href="#welcome">Course Overview</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">Learning Outcomes</span>
+                </div>
+                <h2 class="text-3xl font-bold text-accent-blue mb-6 border-b-2 border-accent-blue/70 pb-2">
                     Learning Outcomes
                 </h2>
-                <p class="text-gray-300 mb-6">Upon successful completion of this course, students should be able to:</p>
-                <ul class="list-disc list-outside space-y-4 text-gray-300 pl-6 text-lg">
+                <p class="text-dark-gray mb-6">Upon successful completion of this course, students should be able to:</p>
+                <ul class="list-disc list-outside space-y-3 text-dark-gray pl-6 md:text-lg">
                     <li>
                         <strong>Articulate</strong> the interplay between art and science in creating effective data visualizations. Understand how visual design principles enhance data accuracy and clarity, fostering compelling storytelling.
                     </li>
@@ -179,42 +302,1230 @@
                         <strong>Craft</strong> data visualizations tailored for different audiences. Consider the scientific principles of clear communication to ensure visualizations are readily understood and actionable.
                     </li>
                     <li>
-                        <strong>Effectively present</strong> "stories with data" to a variety of audiences. This includes leveraging both the visual and informational aspects of data visualizations to engage and inspire action.
+                        <strong>Effectively present</strong> "stories with data" to a variety of audiences.
                     </li>
                 </ul>
-            </section>
+            </div>
+        </section>
 
-            <!-- Course Materials -->
-            <section id="materials" class="mb-12">
-                <h2 class="text-3xl font-bold text-white mb-6 border-b-2 border-teal-500/70 pb-2">
+        <!-- 1.4 Course Materials -->
+        <section id="materials" class="scroll-section bg-grad-1">
+            <div class="content-card">
+                 <div class="breadcrumb mb-4">
+                  <a href="#welcome">Course Overview</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">Course Materials</span>
+                </div>
+                <h2 class="text-3xl font-bold text-accent-blue mb-6 border-b-2 border-accent-blue/70 pb-2">
                     Course Materials
                 </h2>
-                <div class="space-y-4 text-gray-300 text-lg">
-                    <p class="text-xl font-semibold text-teal-400">Required Text</p>
+                <div class="space-y-4 text-dark-gray md:text-lg">
+                    <p class="text-xl font-semibold text-accent-blue">Required Text</p>
                     <ul class="list-disc list-outside pl-6 space-y-2">
                         <li>
-                            Storytelling with Data: A Data Visualization Guide for Business Professionals – <a href="https://learning.oreilly.com/library/view/storytelling-with-data/9781119002253/" class="text-teal-400 hover:text-teal-300 underline decoration-teal-400/50 hover:decoration-teal-300 transition-colors">Resource Link</a>
+                            Storytelling with Data: A Data Visualization Guide for Business Professionals – <a href="https://learning.oreilly.com/library/view/storytelling-with-data/9781119002253/" target="_blank" class="text-accent-blue hover:text-primary underline">Resource Link</a>
                         </li>
                     </ul>
                     
-                    <p class="text-xl font-semibold text-teal-400 pt-4">Optional Textbooks</p>
+                    <p class="text-xl font-semibold text-accent-blue pt-4">Optional Textbooks</p>
                     <ul class="list-disc list-outside pl-6 space-y-2">
                         <li>
-                            Fundamentals of Data Visualization – <a href="https://learning.oreilly.com/library/view/fundamentals-of-data/9781492031079/" class="text-teal-400 hover:text-teal-300 underline decoration-teal-400/50 hover:decoration-teal-300 transition-colors">Resource Link</a>
+                            Fundamentals of Data Visualization – <a href="https://learning.oreilly.com/library/view/fundamentals-of-data/9781492031079/" target="_blank" class="text-accent-blue hover:text-primary underline">Resource Link</a>
                         </li>
                         <li>
-                            R for Data Science – <a href="https://learning.oreilly.com/library/view/r-for-data/9781492097396/" class="text-teal-400 hover:text-teal-300 underline decoration-teal-400/50 hover:decoration-teal-300 transition-colors">Resource Link</a>
+                            R for Data Science – <a href="https://learning.oreilly.com/library/view/r-for-data/9781492097396/" target="_blank" class="text-accent-blue hover:text-primary underline">Resource Link</a>
                         </li>
                     </ul>
                 </div>
-            </section>
-        </main>
-    </div>
+            </div>
+        </section>
 
-    <!-- Footer -->
-    <footer class="text-center p-10 mt-12 border-t border-gray-700/50">
-        <p class="text-gray-500">Data Visualization Course</p>
-    </footer>
+        <!-- 
+          PARENT SECTION 2: COURSE SETUP
+        -->
 
+        <!-- 2.1 Setup Intro -->
+        <section id="setup-intro" class="scroll-section bg-grad-2">
+            <div class="content-card">
+                <div class="breadcrumb mb-4">
+                  <span class="current">Course Setup</span>
+                  <span class="divider">&gt;</span>
+                  <span>Introduction</span>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-primary mb-4">
+                    Data Visualization: Setup Instructions
+                </h1>
+                <p class="text-lg text-dark-gray mb-6">
+                    These instructions are for you to complete <strong class="text-teal-500">before our first day of class</strong>. Setting up your environment ahead of time will ensure we can dive right into our inclass excercise and first assignment.
+                </p>
+
+                <div class="bg-light-bg p-4 md:p-6 rounded-xl border border-accent-light/30 shadow-lg">
+                    <h2 class="text-xl font-bold text-primary mb-4">Summary of Required Tools</h2>
+                    <ul class="list-none space-y-2">
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-teal-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <strong>Posit Cloud Account</strong>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-teal-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <strong>VS Code + Python + Plotly (optional)</strong>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-teal-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <strong>Power BI</strong>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-teal-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <strong>Tableau Public Account & Desktop</strong>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2.2 Setup Posit Cloud -->
+        <section id="setup-posit" class="scroll-section bg-grad-2">
+            <div class="content-card">
+                <div class="breadcrumb mb-4">
+                  <a href="#setup-intro">Course Setup</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">Set Up Posit Cloud (R)</span>
+                </div>
+                <h2 class="text-3xl font-bold text-primary mb-6 border-b-2 border-teal-500/70 pb-2">
+                    Set Up Posit Cloud (for R)
+                </h2>
+                <ol class="list-decimal list-outside space-y-3 text-dark-gray pl-6">
+                    <li>Go to <a href="https://posit.cloud/" target="_blank" rel="noopener noreferrer" class="text-teal-500 hover:text-primary underline">Posit Cloud</a> and create a free account.</li>
+                    <li>Log in to your new account.</li>
+                    <li>
+                        Download these files from <a href="https://github.com/leoneln/data-viz/tree/main/R" class="text-teal-500 hover:text-primary underline">GitHub</a>:
+                        <code class="block bg-accent-light text-primary px-1.5 py-0.5 rounded-sm font-mono text-sm mt-1">
+                            package_install.R<br/>
+                            Hands On Exercise 1.qmd <br />
+                            Hands On Exercise 2.qmd
+                        </code>
+                    </li>
+                    <li>Upload all three files to your Posit Cloud project.</li>
+                    <li>
+                       Open <code class="bg-accent-light text-primary px-1.5 py-0.5 rounded-sm font-mono text-sm">package_install.R</code> and <strong class="text-primary">Run Part 1</strong> of the script to install libraries.
+                    </li>
+                    <li><strong class="text-teal-500">Part 2</strong> of that file is an optional (but fun!) exercise.</li>
+                </ol>
+                <p class="mt-4 p-3 bg-teal-500/10 border-l-4 border-teal-500 text-teal-900 rounded-r-lg">
+                    <strong>Note:</strong> We will review the Posit Cloud UI and exercise files together in class.
+                </p>
+            </div>
+        </section>
+
+        <!-- 2.3 Setup Python 1 (Basics) -->
+        <section id="setup-python-1" class="scroll-section bg-grad-2">
+            <div class="content-card">
+                <div class="breadcrumb mb-4">
+                  <a href="#setup-intro">Course Setup</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">Set Up Python (1/6)</span>
+                </div>
+                <h2 class="text-3xl font-bold text-primary mb-6 border-b-2 border-teal-500/70 pb-2">
+                    Set Up Python + Plotly: Part 1
+                </h2>
+                <p class="text-dark-gray mb-6">
+                    We will use VS Code, Python, and several libraries for a hands on lab as an introduciton to python. This is optional and there will be no assignment due with python. We also recommend installing the VS Code extensions <strong>Python</strong>, <strong>Pylance</strong>, <strong>Jupyter</strong>, and <strong>Black Formatter</strong>.
+                </p>
+                <h3 class="text-xl font-semibold text-teal-500 mb-3 mt-8">Install the Basics</h3>
+                <ol class="list-decimal list-outside space-y-3 text-dark-gray pl-6">
+                    <li><strong>Install Python:</strong> Download from <a href="https://www.python.org/downloads/" target="_blank" rel="noopener noreferrer" class="text-teal-500 hover:text-primary underline">python.org/downloads</a>.
+                        <span class="block text-sm text-dark-gray mt-1">Windows users: make sure to check "Add Python to PATH".</span>
+                    </li>
+                    <li><strong>Install VS Code:</strong> Download from <a href="https://code.visualstudio.com/" target="_blank" rel="noopener noreferrer" class="text-teal-500 hover:text-primary underline">code.visualstudio.com</a>.
+                        <span class="block text-sm text-dark-gray mt-1">Launch VS Code and install the recommended extensions from the marketplace.</span>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- 2.4 Setup Python 2 (Venv) -->
+        <section id="setup-python-2" class="scroll-section bg-grad-2">
+            <div class="content-card">
+                <div class="breadcrumb mb-4">
+                  <a href="#setup-intro">Course Setup</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">Set Up Python (2/6)</span>
+                </div>
+                <h2 class="text-3xl font-bold text-primary mb-6 border-b-2 border-teal-500/70 pb-2">
+                    Set Up Python + Plotly: Part 2
+                </h2>
+                <h3 class="text-xl font-semibold text-teal-500 mb-3">Create Course Folder & Virtual Environment</h3>
+                <p class="text-dark-gray text-sm mb-4">(This is optional, but highly recommended to isolate class packages).</p>
+                <ol class="list-decimal list-outside space-y-3 text-dark-gray pl-6">
+                    <li>Create a folder on your computer, then open it in VS Code (<code class="bg-accent-light text-primary px-1 py-0.5 rounded-sm">File > Open Folder</code>).</li>
+                    <li>Open a new terminal in VS Code (<code class="bg-accent-light text-primary px-1 py-0.5 rounded-sm">Terminal > New Terminal</code>).</li>
+                    <li>
+                        Create a virtual environment (one time):
+                        <div class="my-3">
+                            <span class="text-sm font-medium text-dark-gray block mb-1">Windows (PowerShell)</span>
+                            <pre class="bg-primary text-white rounded-md p-3 overflow-x-auto text-sm font-mono border border-accent-light"><code class="language-bash">python -m venv .venv
+.\.venv\Scripts\Activate</code></pre>
+                        </div>
+                        <div class="my-3">
+                            <span class="text-sm font-medium text-dark-gray block mb-1">OSX (Terminal)</span>
+                            <pre class="bg-primary text-white rounded-md p-3 overflow-x-auto text-sm font-mono border border-accent-light"><code class="language-bash">python3 -m venv .venv
+source .venv/bin/activate</code></pre>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- 2.5 Setup Python 3 (Libs) -->
+        <section id="setup-python-3" class="scroll-section bg-grad-2">
+            <div class="content-card">
+                <div class="breadcrumb mb-4">
+                  <a href="#setup-intro">Course Setup</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">Set Up Python (3/6)</span>
+                </div>
+                <h2 class="text-3xl font-bold text-primary mb-6 border-b-2 border-teal-500/70 pb-2">
+                    Set Up Python + Plotly: Part 3
+                </h2>
+                <h3 class="text-xl font-semibold text-teal-500 mb-3">Install Required Libraries</h3>
+                <p class="text-dark-gray mb-3">Make sure your virtual environment is active, then run this in your VS Code terminal:</p>
+                <pre class="bg-primary text-white rounded-md p-3 overflow-x-auto text-sm font-mono border border-accent-light my-3"><code class="language-bash">python -m pip install --upgrade pip
+pip install pandas plotly jupyter kaleido black</code></pre>
+                
+                <h3 class="text-xl font-semibold text-teal-500 mb-3 mt-6">Why These Libraries?</h3>
+                <ul class="list-disc list-outside space-y-1 mt-3 pl-6 text-dark-gray">
+                    <li><strong>Pandas:</strong> for data wrangling.</li>
+                    <li><strong>Plotly:</strong> for creating interactive charts.</li>
+                    <li><strong>Jupyter:</strong> for VS Code’s interactive notebooks.</li>
+                    <li><strong>Kaleido:</strong> for exporting visuals (png, svg, pdf).</li>
+                    <li><strong>Black:</strong> to keep code formatting clean and consistent.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 2.6 Setup Python 4 (Test 1) -->
+        <section id="setup-python-4" class="scroll-section bg-grad-2">
+            <div class="content-card">
+                <div class="breadcrumb mb-4">
+                  <a href="#setup-intro">Course Setup</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">Set Up Python (4/6)</span>
+                </div>
+                <h2 class="text-3xl font-bold text-primary mb-6 border-b-2 border-teal-500/70 pb-2">
+                    Set Up Python + Plotly: Part 4
+                </h2>
+                <h3 class="text-xl font-semibold text-teal-500 mb-3">Quick Test (Jupyter Notebook)</h3>
+                <ol class="list-decimal list-outside space-y-3 text-dark-gray pl-6">
+                    <li>In VS Code, create a new Jupyter Notebook (<code class="bg-accent-light text-primary px-1 py-0.5 rounded-sm">File > New File > Jupyter Notebook</code>) and name it <code class="bg-accent-light text-primary px-1.5 py-0.5 rounded-sm font-mono text-sm">hello_plotly.ipynb</code>.</li>
+                    <li>
+                        In the first cell, type and run the following code:
+                        <pre class="bg-primary text-white rounded-md p-3 overflow-x-auto text-sm font-mono border border-accent-light my-3"><code class="language-python">import pandas as pd
+import plotly.express as px
+
+# tiny dataset
+df = pd.DataFrame({
+    "year": [2021, 2022, 2023, 2024, 2025],
+    "enrollment": [25000, 26300, 27150, 26000, 29323]
+})
+
+fig = px.line(df, x="year", y="enrollment", title="Enrollment Over Time")
+fig.update_layout(template="plotly_white")
+fig.show()</code></pre>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- 2.7 Setup Python 5 (Test 2) -->
+        <section id="setup-python-5" class="scroll-section bg-grad-2">
+            <div class="content-card">
+                <div class="breadcrumb mb-4">
+                  <a href="#setup-intro">Course Setup</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">Set Up Python (5/6)</span>
+                </div>
+                <h2 class="text-3xl font-bold text-primary mb-6 border-b-2 border-teal-500/70 pb-2">
+                    Set Up Python + Plotly: Part 5
+                </h2>
+                <h3 class="text-xl font-semibold text-teal-500 mb-3">Quick Test (Python Script)</h3>
+                <p class="text-dark-gray mb-3">If you prefer scripts, create a new file <code class="bg-accent-light text-primary px-1.5 py-0.5 rounded-sm font-mono text-sm">hello_plotly.py</code> with this code:</p>
+                <pre class="bg-primary text-white rounded-md p-3 overflow-x-auto text-sm font-mono border border-accent-light my-3"><code class="language-python">import pandas as pd
+import plotly.express as px
+
+df = pd.DataFrame({"x":[1,2,3,4], "y":[3,1,4,2]})
+fig = px.scatter(df, x="x", y="y", title="Hello, Plotly!")
+fig.update_layout(template="plotly_white")
+fig.show()</code></pre>
+                <p class="text-dark-gray">On the terminal, execute the file with:</p>
+                <pre class="bg-primary text-white rounded-md p-3 overflow-x-auto text-sm font-mono border border-accent-light my-3"><code class="language-bash">python hello_plotly.py</code></pre>
+            </div>
+        </section>
+
+         <!-- 2.8 Setup Python 6 (Py Repos) -->
+        <section id="setup-python-6" class="scroll-section bg-grad-2">
+            <div class="content-card">
+                 <div class="breadcrumb mb-4">
+                  <a href="#setup-intro">Course Setup</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">Set Up Python (6/6)</span>
+                </div>
+                <h2 class="text-3xl font-bold text-primary mb-6 border-b-2 border-teal-500/70 pb-2">
+                    Set Up Python + Plotly: Part 6
+                </h2>
+                <h3 class="text-xl font-semibold text-teal-500 mb-3">Download Class Files</h3>
+                 <p class="text-dark-gray mb-3">Finally, download the Python exercise files from our GitHub repo. We will use these in class.</p>
+                 <a href="https://github.com/leoneln/data-viz/tree/main/Python" target="_blank" rel="noopener" class="inline-block bg-teal-500 text-white font-bold px-6 py-3 rounded-lg shadow-lg hover:bg-teal-400 transition-colors">
+                    Go to Python GitHub Files
+                 </a>
+                 <p class="text-dark-gray mt-4">Download the <code class="bg-accent-light text-primary px-1.5 py-0.5 rounded-sm font-mono text-sm">.ipynb</code> (Notebook) and <code class="bg-accent-light text-primary px-1.5 py-0.5 rounded-sm font-mono text-sm">.py</code> (Script) files and add them to the course folder you created.</p>
+            </div>
+        </section>
+
+        <!-- 2.9 Setup Power BI -->
+        <section id="setup-powerbi" class="scroll-section bg-grad-2">
+            <div class="content-card">
+                <div class="breadcrumb mb-4">
+                  <a href="#setup-intro">Course Setup</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">Set Up Power BI</span>
+                </div>
+                <h2 class="text-3xl font-bold text-primary mb-6 border-b-2 border-teal-500/70 pb-2">
+                    Download and Setup Power BI
+                </h2>
+                <p class="text-dark-gray mb-6">
+                    You will also need Power BI for class exercises. Here’s how to get it set up:
+                </p>
+                <ol class="list-decimal list-outside space-y-3 text-dark-gray pl-6">
+                    <li>Go to <a href="https://office.com" target="_blank" rel="noopener noreferrer" class="text-teal-500 hover:text-primary underline">Office.com</a> and log in with your school-provided credentials.</li>
+                    <li>Once logged in, search for <strong>Power BI</strong> in the Office apps.</li>
+                    <li>Download and install <strong>Power BI Desktop</strong> from the site if you are using a Windows machine. Otherwise, you’ll need to use Power BI Online.</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- 2.10 Setup Tableau -->
+        <section id="setup-tableau" class="scroll-section bg-grad-2">
+            <div class="content-card">
+                 <div class="breadcrumb mb-4">
+                  <a href="#setup-intro">Course Setup</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">Set Up Tableau</span>
+                </div>
+                <h2 class="text-3xl font-bold text-primary mb-6 border-b-2 border-teal-500/70 pb-2">
+                    Create a Tableau Public Account
+                </h2>
+                <p class="text-dark-gray mb-6">
+                    For the next part of our course, we will use Tableau. Follow these instructions to get Tableau set up:
+                </p>
+                <ol class="list-decimal list-outside space-y-3 text-dark-gray pl-6">
+                    <li>Go to <a href="https://public.tableau.com/s/" target="_blank" rel="noopener noreferrer" class="text-teal-500 hover:text-primary underline">Tableau Public</a>.</li>
+                    <li>Create a free Tableau Public account.</li>
+                    <li>After creating your account, download <strong>Tableau Desktop Public</strong> (this version is free).</li>
+                    <li>Install Tableau Desktop Public on your computer.</li>
+                </ol>
+            </div>
+        </section>
+
+
+        <!-- 
+          PARENT SECTION 3: ART & SCIENCE
+        -->
+
+        <!-- 3.1 Art & Science Intro -->
+        <section id="art-intro" class="scroll-section bg-grad-3">
+            <div class="content-card art-science-card">
+                <div class="breadcrumb mb-4">
+                  <span class="current">Art & Science</span>
+                  <span class="divider">&gt;</span>
+                  <span>Introduction</span>
+                </div>
+                <header class="text-center my-4">
+                    <h1 class="text-3xl md:text-4xl text-primary font-bold mb-4">The Art & Science of Data Visualization</h1>
+                    <p class="text-lg md:text-xl text-dark-gray">A Discussion Guide: Balancing Beauty and Insight</p>
+                </header>
+                <div class="p-6 bg-light-bg rounded-lg">
+                    <p class="mt-4 p-3 bg-teal-500/10 border-l-4 border-teal-500 text-teal-900 rounded-r-lg">
+                        Does <strong>"beautiful"</strong> always mean <strong>"insightful"</strong>? This field lives at the intersection of two powerful disciplines: the rigorous <span class="font-bold text-accent-green">Science of Truth</span> and the expressive <span class="font-bold text-accent-red">Art of Storytelling</span>.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3.2 The Science -->
+        <section id="art-science-slide" class="scroll-section bg-grad-3">
+            <div class="content-card art-science-card">
+                <div class="breadcrumb mb-4">
+                  <a href="#art-intro">Art & Science</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">The Science</span>
+                </div>
+                <h2 class="text-3xl text-primary mb-4">The Science: The Foundation of Truth</h2>
+                <p class="text-lg text-dark-gray mb-6">
+                    The <strong>"science"</strong> is the non-negotiable foundation. It dictates accuracy and comprehension. Get this wrong, and the visualization fails, no matter how beautiful.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="flex flex-col items-center">
+                        <h3 class="text-xl font-semibold text-accent-red mb-2">DON'T: Misleading</h3>
+                        <p class="text-center text-dark-gray mb-4 text-sm">This chart distorts perception. The Y-axis doesn't start at 0, making 'A' look tiny.</p>
+                        <div class="chart-container">
+                            <canvas id="chartScienceBad"></canvas>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <h3 class="text-xl font-semibold text-accent-green mb-2">DO: Accurate</h3>
+                        <p class="text-center text-dark-gray mb-4 text-sm">This bar chart correctly shows the true relationship. The Y-axis starts at 0.</p>
+                        <div class="chart-container">
+                            <canvas id="chartScienceGood"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 bg-light-bg rounded-lg">
+                    <p class="mt-4 p-3 bg-teal-500/10 border-l-4 border-teal-500 text-teal-900 rounded-r-lg">
+                        <strong>Discussion:</strong> As future business leaders and information system professionals, how critical is the <strong>perceived objectivity</strong> of data visualization? Discuss the ethical implications for decision-making and stakeholder trust when visualizations, even unintentionally, violate scientific principles like data integrity. Can a "beautiful lie" be more dangerous than an "ugly truth" in a corporate or analytical context?
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3.3 The Art -->
+        <section id="art-art" class="scroll-section bg-grad-3">
+            <div class="content-card art-science-card">
+                 <div class="breadcrumb mb-4">
+                  <a href="#art-intro">Art & Science</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">The Art</span>
+                </div>
+                <h2 class="text-3xl text-primary mb-4">The Art: The Amplifier of Meaning</h2>
+                <p class="text-lg text-dark-gray mb-6">
+                    The <strong>"art"</strong> is the human layer that transforms a correct chart into a compelling story. This isn't decoration; it's <strong>functional art</strong> used to guide the user.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="flex flex-col items-center">
+                        <h3 class="text-xl font-semibold text-dark-gray mb-2">Correct, But Lacks Focus</h3>
+                        <p class="text-center text-dark-gray mb-4 text-sm">This chart is accurate, but all trends compete for attention. Where is the story?</p>
+                        <div class="chart-container">
+                            <canvas id="chartArtBad"></canvas>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <h3 class="text-xl font-semibold text-accent-green mb-2">Artful, Focused, & Insightful</h3>
+                        <p class="text-center text-dark-gray mb-4 text-sm">Here, art serves science. A single accent color instantly guides our eye to the key trend.</p>
+                        <div class="chart-container">
+                            <canvas id="chartArtGood"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 bg-light-bg rounded-lg">
+                    <p class="mt-4 p-3 bg-teal-500/10 border-l-4 border-teal-500 text-teal-900 rounded-r-lg">
+                        <strong>Discussion:</strong> Consider a dashboard you’ve encountered in a professional setting. How effectively did its <strong>"artistic"</strong> elements (color palette, layout, typography) guide your attention and enhance the narrative? How can strategic aesthetic choices can influence <strong>perceived urgency</strong> or <strong>opportunity</strong> in a business context, and how to balance this persuasive power with objective reporting.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3.4 The Pitfall -->
+        <section id="art-pitfall" class="scroll-section bg-grad-3">
+            <div class="content-card art-science-card">
+                <div class="breadcrumb mb-4">
+                  <a href="#art-intro">Art & Science</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">The Pitfall</span>
+                </div>
+                <h2 class="text-3xl text-primary mb-4">The Pitfall: When the 'Wow' Fades</h2>
+                <p class="text-lg text-dark-gray mb-6">
+                    This happens when art overshadows science. The user spends all their energy trying to <strong>read</strong> the chart, with no energy left to <strong>understand</strong> the data.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="flex flex-col items-center">
+                        <h3 class="text-xl font-semibold text-accent-red mb-4">Cluttered Chart Junk</h3>
+                        <p class="text-center text-dark-gray mb-4 text-sm">This chart is overloaded with unnecessary elements: busy background, redundant legend, and distracting patterns.</p>
+                        <div class="chart-container chart-clutter-bg">
+                            <canvas id="chartJunk"></canvas>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <h3 class="text-xl font-semibold text-accent-red mb-4">The Path to Disengagement</h3>
+                        <div class="flex flex-col items-center space-y-2 w-full max-w-sm mx-auto">
+                            <div class="p-3 bg-accent-white rounded-lg shadow-sm border border-accent-light w-full text-center">
+                                <span class="text-md font-semibold text-dark-gray">1. Beautiful, Complex Chart</span>
+                            </div>
+                            <span class="arrow font-bold">&darr;</span>
+                            <div class="p-3 bg-red-100 rounded-lg shadow-sm border border-red-300 w-full text-center">
+                                <span class="text-md font-semibold text-red-700">2. Confusion: Form Obscures Function</span>
+                            </div>
+                            <span class="arrow text-accent-red font-bold">&darr;</span>
+                            <div class="p-3 bg-red-100 rounded-lg shadow-sm border border-red-300 w-full text-center">
+                                <span class="text-md font-semibold text-red-700">3. Engagement Fades</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 bg-light-bg rounded-lg">
+                    <p class="mt-4 p-3 bg-teal-500/10 border-l-4 border-teal-500 text-teal-900 rounded-r-lg">
+                        <strong>Discussion:</strong> In a competitive business environment, there can be pressure to create "flashy" reports or dashboards that impress stakeholders, even if they sacrifice clarity. How do you, as an information system specialist or business analyst, push back against the creation of "chart junk" when it's requested by a manager or client? What are the long-term costs of prioritizing initial "awe" over sustained "understanding" in data communication?
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3.5 The Goal -->
+        <section id="art-goal" class="scroll-section bg-grad-3">
+            <div class="content-card art-science-card">
+                <div class="breadcrumb mb-4">
+                  <a href="#art-intro">Art & Science</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">The Goal</span>
+                </div>
+                <div class="p-6 md:p-10 text-center border-accent-blue border-2 rounded-lg">
+                    <h2 class="text-3xl text-primary mb-4">The Goal: Elegant Efficiency</h2>
+                    <p class="text-xl md:text-2xl text-dark-gray mb-8 max-w-3xl mx-auto">
+                        The best visualizations are a seamless synthesis. The <strong>"art"</strong> is in service of the <strong>"science."</strong> The beauty isn't the complexity, it's the profound clarity.
+                    </p>
+                    <div class="bg-primary text-accent-white rounded-lg p-8 shadow-inner border border-accent-light">
+                        <span class="block text-3xl md:text-5xl font-bold">"Wow... I get it!"</span>
+                    </div>
+                </div>
+                <div class="p-6 bg-light-bg rounded-lg">
+                    <p class="mt-4 p-3 bg-teal-500/10 border-l-4 border-teal-500 text-teal-900 rounded-r-lg">
+                        <strong>Discussion:</strong> Considering your role in an organization, what are your top 2-3 considerations to achieve <strong>"Elegant Efficiency"</strong> for your specific audience (e.g., C-suite, operations team, clients)? How do you measure if a visualization has truly led to that "Wow... I get it!" moment versus just a fleeting impression?
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3.6 Key References -->
+        <section id="art-refs" class="scroll-section bg-grad-3">
+            <div class="content-card art-science-card">
+                <div class="breadcrumb mb-4">
+                  <a href="#art-intro">Art & Science</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">References</span>
+                </div>
+                <h2 class="text-3xl text-primary mb-8 text-center">Key References & Further Reading</h2>
+                <ul class="space-y-4 max-w-3xl mx-auto text-lg text-dark-gray">
+                    <li class="flex items-start gap-4">
+                        <span class="text-accent-blue font-bold mt-1">&#10148;</span>
+                        <div>
+                            <strong>Edward R. Tufte.</strong> <em>The Visual Display of Quantitative Information.</em>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <span class="text-accent-blue font-bold mt-1">&#10148;</span>
+                        <div>
+                            <strong>Stephen Few.</strong> <em>Show Me the Numbers.</em>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <span class="text-accent-blue font-bold mt-1">&#10148;</span>
+                        <div>
+                            <strong>Cole Nussbaumer Knaflic.</strong> <em>Storytelling with Data.</em>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <span class="text-accent-blue font-bold mt-1">&#10148;</span>
+                        <div>
+                            <strong>Alberto Cairo.</strong> <em>The Functional Art.</em>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+
+        <!-- 
+          PARENT SECTION 4: EFFECTIVENESS PROFILE
+        -->
+
+        <!-- 4.1 Effectiveness Intro -->
+        <section id="effectiveness" class="scroll-section bg-grad-1">
+            <div class="content-card text-center">
+                 <div class="breadcrumb mb-4">
+                  <span class="current">Effectiveness Profile</span>
+                  <span class="divider">&gt;</span>
+                  <span>Introduction</span>
+                </div>
+                <h1 class="text-3xl md:text-5xl font-bold text-primary mb-4">The Data Visualization Effectiveness Profile</h1>
+                <p class="text-xl md:text-2xl text-accent-blue mb-6">A Student's Guide to Evaluating Visualizations<br>(Based on Stephen Few)</p>
+                <p class="text-lg text-dark-gray">Use this guide to critique visualizations for your assignment. Scroll to begin.</p>
+                <div class="mt-8 text-accent-blue animate-bounce-slow">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 4.2 Core Categories -->
+        <section id="eff-categories" class="scroll-section bg-grad-2">
+            <div class="content-card">
+                 <div class="breadcrumb mb-4">
+                  <a href="#effectiveness">Effectiveness Profile</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">Core Categories</span>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary text-center">The Two Core Categories</h2>
+                <p class="text-lg text-dark-gray mb-6 text-center max-w-3xl mx-auto">Stephen Few's framework is built on two simple questions. A visualization must be <span class="font-bold">Informative</span>. It <strong>can</strong> also be <span class="font-bold">Emotive</span>.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-primary">
+                        <h3 class="text-2xl font-bold text-accent-white mb-3">1. Informative (The "Must-Have")</h3>
+                        <p class="text-base">Does the visualization produce the <strong>right understanding</strong>? This category is your primary focus.
+                        <!-- REMOVED text-accent-light -->
+                        <ul class="list-disc list-inside mt-4 space-y-1">
+                            <li>Usefulness, Completeness, Perceptibility, Truthfulness, Intuitiveness</li>
+                        </ul>
+                        </p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-primary">
+                        <h3 class="text-2xl font-bold text-accent-white mb-3">2. Emotive (The "Nice-to-Have")</h3>
+                        <p class="text-base">Does the visualization produce a <strong>useful emotional response</strong>? This is about how the chart <strong>feels</strong>.
+                        <!-- REMOVED text-accent-light -->
+                        <ul class="list-disc list-inside mt-4 space-y-1">
+                            <li>Aesthetics, Engagement</li>
+                        </ul>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4.3 Usefulness & Completeness -->
+        <section id="eff-info-1" class="scroll-section bg-grad-3">
+            <div class="content-card">
+                <div class="breadcrumb mb-4">
+                  <a href="#effectiveness">Effectiveness Profile</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">Informative (1-2)</span>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary text-center">Informative: The "Why" & "What"</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-primary">
+                        <span class="text-5xl">🎯</span>
+                        <h3 class="text-2xl font-semibold my-2">1. Usefulness</h3>
+                        <p class="text-sm font-semibold text-dark-gray">Useless ‹<span class="text-primary font-bold">---</span>› Very Useful</p>
+                        <p class="text-base text-dark-gray mt-3">Does this visualization <strong>matter</strong> to its intended audience? Does it help them make a decision? A perfectly designed chart about useless data is still a failed visualization.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-primary">
+                        <span class="text-5xl">🧩</span>
+                        <h3 class="text-2xl font-semibold my-2">2. Completeness</h3>
+                        <p class="text-sm font-semibold text-dark-gray">No context ‹<span class="text-primary font-bold">---</span>› Full context</p>
+                        <p class="text-base text-dark-gray mt-3">Does the chart provide all information needed for understanding? Completeness usually requires <span class="font-bold">context</span>, such as a comparison to a target, a historical trend, or an average.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4.4 Perceptibility -->
+        <section id="eff-info-2" class="scroll-section bg-grad-3">
+            <div class="content-card">
+                 <div class="breadcrumb mb-4">
+                  <a href="#effectiveness">Effectiveness Profile</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">Informative (3)</span>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary text-center">Informative: 3. Perceptibility</h2>
+                <p class="text-lg text-center text-dark-gray mb-6">Is the information <strong>easy for the human brain to perceive</strong>? This is all about choosing the right chart for the job.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-xl font-semibold text-center text-accent-red">POOR PERCEPTIBILITY</h4>
+                        <p class="text-center text-dark-gray mb-2">Treemaps & Pie Charts use area, which is hard to compare accurately.</p>
+                        <div class="w-full h-48 max-w-sm mx-auto border-2 border-primary bg-dark-gray flex text-white mt-4">
+                            <div class="w-2/3 h-full flex flex-col">
+                                <div class="h-1/2 flex">
+                                    <div class="w-1/3 treemap-sim bg-red-400">A</div>
+                                    <div class="w-2/3 treemap-sim bg-blue-400">B</div>
+                                </div>
+                                <div class="h-1/2 treemap-sim bg-green-500">C</div>
+                            </div>
+                            <div class="w-1/3 h-full flex flex-col">
+                                <div class="h-1/4 treemap-sim bg-yellow-500">D</div>
+                                <div class="h-1/4 treemap-sim bg-gray-500">E</div>
+                                <div class="h-1/2 treemap-sim-lg bg-indigo-500">F</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-center text-accent-green">HIGH PERCEPTIBILITY</h4>
+                        <p class="text-center text-dark-gray mb-2">Bar charts use length on a common baseline, which is clear and precise.</p>
+                        <div class="chart-container h-48 mt-4">
+                            <canvas id="chartPerceptible"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4.5 Truthfulness -->
+        <section id="eff-info-3" class="scroll-section bg-grad-3">
+            <div class="content-card">
+                <div class="breadcrumb mb-4">
+                  <a href="#effectiveness">Effectiveness Profile</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">Informative (4)</span>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary text-center">Informative: 4. Truthfulness</h2>
+                <p class="text-lg text-center text-dark-gray mb-6">Is the visualization accurate and valid? A bar chart with a Y-axis that doesn't start at zero is <span class="font-bold text-accent-red">untruthful</span>.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-xl font-semibold text-center text-accent-red">UNTRUTHFUL (Truncated Axis)</h4>
+                        <p class="text-center text-dark-gray mb-2">This chart makes Jan look tiny and Jun look massive, exaggerating the change.</p>
+                        <div class="chart-container h-48">
+                            <canvas id="chartTruthBad"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-center text-accent-green">TRUTHFUL (Axis at Zero)</h4>
+                        <p class="text-center text-dark-gray mb-2">This is the <strong>honest</strong> view. The variation is small. A line chart is also a better choice here.</p>
+                        <div class="chart-container h-48">
+                            <canvas id="chartTruthGood"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4.6 Intuitiveness -->
+        <section id="eff-info-4" class="scroll-section bg-grad-3">
+            <div class="content-card">
+                <div class="breadcrumb mb-4">
+                  <a href="#effectiveness">Effectiveness Profile</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">Informative (5)</span>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary text-center">Informative: 5. Intuitiveness</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-primary">
+                        <span class="text-5xl">🧠</span>
+                        <h3 class="text-2xl font-semibold my-2">Intuitiveness</h3>
+                        <p class="text-sm font-semibold text-dark-gray">Unfamiliar & Difficult ‹<span class="text-primary font-bold">---</span>› Familiar & Easy</p>
+                        <p class="text-base text-dark-gray mt-3">Is the chart familiar and easy for its <strong>specific audience</strong> to understand? A bar chart is familiar to almost everyone. A parallel coordinates plot is not.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-primary">
+                        <span class="text-5xl">💡</span>
+                        <h3 class="text-2xl font-semibold my-2">The Trade-Off</h3>
+                        <p class="text-base text-dark-gray mt-3">Sometimes, a less intuitive chart is necessary because it's the <strong>only</strong> way to show complex data (the `Completeness` criterion). This is a trade-off you must justify.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4.7 Emotive -->
+        <section id="eff-emotive" class="scroll-section bg-grad-4">
+            <div class="content-card">
+                <div class="breadcrumb mb-4">
+                  <a href="#effectiveness">Effectiveness Profile</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">Emotive (6-7)</span>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary text-center">Emotive Criteria: The "Feel"</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-accent-blue">
+                        <span class="text-5xl">🎨</span>
+                        <h3 class="text-2xl font-semibold my-2">6. Aesthetics</h3>
+                        <p class="text-sm font-semibold text-dark-gray">Ugly ‹<span class="text-primary font-bold">---</span>› Pleasing ‹<span class="text-primary font-bold">---</span>› Beautiful</p>
+                        <p class="text-base text-dark-gray mt-3">A "pleasing" aesthetic is usually achieved by <strong>simplicity</strong>. Remove clutter, use a clean font, use thoughtful colors, and give the content space to breathe.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-accent-blue">
+                        <span class="text-5xl">🧲</span>
+                        <h3 class="text-2xl font-semibold my-2">7. Engagement</h3>
+                        <p class="text-sm font-semibold text-dark-gray">Distracts from data ‹<span class="text-primary font-bold">---</span>› Draws one into data</p>
+                        <p class="text-base text-dark-gray mt-3">This is <strong>not</strong> chart junk. True engagement <strong>draws the user into the data</strong>. A clean chart that highlights a key insight is highly engaging.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4.8 Case Study -->
+        <section id="eff-case-study" class="scroll-section bg-grad-4">
+            <div class="content-card">
+                <div class="breadcrumb mb-4">
+                  <a href="#effectiveness">Effectiveness Profile</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">Case Study</span>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary text-center">Case Study: Engagement vs. Distraction</h2>
+                <p class="text-lg text-center text-dark-gray mb-6">The original "Billion Pound-O-Gram" treemap was novel, but its engagement <strong>distracted</strong> from the data. The redesigned bar chart <strong>engages</strong> by making the data clear.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-xl font-semibold text-center text-accent-red">DISTRACTING</h4>
+                        <p class="text-center text-dark-gray mb-2">Impossible to compare values.</p>
+                        <div class="w-full h-48 max-w-sm mx-auto border-2 border-primary bg-dark-gray flex text-white mt-4">
+                            <div class="w-2/3 h-full flex flex-col">
+                                <div class="h-1/2 flex">
+                                    <div class="w-1/3 treemap-sim bg-red-400">Pensions</div>
+                                    <div class="w-2/3 treemap-sim bg-blue-400">Tesco</div>
+                                </div>
+                                <div class="h-1/2 treemap-sim bg-green-500">Wealth</div>
+                            </div>
+                            <div class="w-1/3 h-full flex flex-col">
+                                <div class="h-1/4 treemap-sim bg-yellow-500">Bailout</div>
+                                <div class="h-1/4 treemap-sim bg-gray-500">Lloyds</div>
+                                <div class="h-1/2 treemap-sim-lg bg-indigo-500">Deficit</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-center text-accent-green">TRULY ENGAGING</h4>
+                        <p class="text-center text-dark-gray mb-2">Clear, "engaging" redesign. The <span class="text-accent-orange font-bold">orange</span> bar highlights the key insight.</p>
+                        <div class="chart-container h-48 mt-4">
+                            <canvas id="chartRedesign"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 4.9 Checklist -->
+        <section id="eff-checklist" class="scroll-section bg-grad-1">
+            <div class="content-card text-center">
+                <div class="breadcrumb mb-4">
+                  <a href="#effectiveness">Effectiveness Profile</a>
+                  <span class="divider">&gt;</span>
+                  <span class="current">Assignment Checklist</span>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold text-primary mb-6">Assignment Checklist</h2>
+                <p class="text-lg text-dark-gray mb-6 max-w-3xl mx-auto">Use these 7 questions to form your group's evaluation. Remember: Focus on the "Informative" criteria first!</p>
+                <ul class="list-none text-left max-w-2xl mx-auto space-y-2 text-sm md:text-base">
+                    <li><span class="text-primary font-bold text-lg mr-3">1. Usefulness:</span> Does it have a clear purpose and audience?</li>
+                    <li><span class="text-primary font-bold text-lg mr-3">2. Completeness:</span> Does it provide necessary context (comparisons, targets)?</li>
+                    <li><span class="text-primary font-bold text-lg mr-3">3. Perceptibility:</span> Is it the <strong>right chart type</strong> for the data? (bar vs. pie).</li>
+                    <li><span class="text-primary font-bold text-lg mr-3">4. Truthfulness:</span> Is it accurate? Does the Y-axis start at 0?</li>
+                    <li><span class="text-primary font-bold text-lg mr-3">5. Intuitiveness:</span> Is it simple to understand for its <strong>intended</strong> audience?</li>
+                    <li><span class="text-primary font-bold text-lg mr-3">6. Aesthetics:</span> Is it clean, uncluttered, and pleasing?</li>
+                    <li><span class="text-primary font-bold text-lg mr-3">7. Engagement:</span> Does it use design (e.g., color) to <strong>highlight key insights</strong>?</li>
+                </ul>
+            </div>
+        </section>
+
+    </div> <!-- End .scroll-container -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+        
+            // --- Helper Functions for Charts ---
+            function wrapLabels(label) {
+              if (typeof label === 'string' && label.length > 16) {
+                const words = label.split(' ');
+                const lines = [];
+                let currentLine = '';
+                words.forEach(word => {
+                  if ((currentLine + word).length > 16 && currentLine.length > 0) {
+                    lines.push(currentLine.trim());
+                    currentLine = word + ' ';
+                  } else {
+                    currentLine += word + ' ';
+                  }
+                });
+                lines.push(currentLine.trim());
+                return lines;
+              }
+              return label;
+            }
+
+            const tooltipTitleCallback = (context) => {
+              const item = context[0];
+              let label = item.chart.data.labels[item.dataIndex];
+              if (Array.isArray(label)) {
+                return label.join(' ');
+              }
+              return label;
+            };
+
+            const tooltipTitleCallbackPercent = {
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) {
+                                    return label.join(' ');
+                                } else {
+                                    return label;
+                                }
+                            },
+                             label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.x !== null && context.chart.options.indexAxis === 'y') { // For horizontal bar
+                                    label += context.parsed.x + '%';
+                                } else if (context.parsed.y !== null) { // For line/vertical bar
+                                    label += context.parsed.y;
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            };
+            
+            // --- Chart Drawing (Combined from all files) ---
+
+            // From effectiveness-profile.html
+            const chartData = {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                data: [85, 88, 87, 92, 90, 95]
+            };
+
+            const chartTruthBadCtx = document.getElementById('chartTruthBad');
+            if(chartTruthBadCtx) {
+                new Chart(chartTruthBadCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: chartData.labels,
+                        datasets: [{
+                            label: 'Performance',
+                            data: chartData.data,
+                            backgroundColor: '#EF4444',
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            tooltip: { callbacks: { title: tooltipTitleCallback } },
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                min: 80,
+                                max: 100,
+                                ticks: { color: '#0D1B2A', font: { size: 10 } },
+                                grid: { color: '#778DA9' }
+                            },
+                            x: {
+                                ticks: { color: '#0D1B2A', font: { size: 10 } },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const chartTruthGoodCtx = document.getElementById('chartTruthGood');
+            if(chartTruthGoodCtx) {
+                new Chart(chartTruthGoodCtx, {
+                    type: 'line',
+                    data: {
+                        labels: chartData.labels,
+                        datasets: [{
+                            label: 'Performance',
+                            data: chartData.data,
+                            borderColor: '#10B981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            tooltip: { callbacks: { title: tooltipTitleCallback } },
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: { color: '#0D1B2A', font: { size: 10 } },
+                                grid: { color: '#E0E1DD' }
+                            },
+                            x: {
+                                ticks: { color: '#0D1B2A', font: { size: 10 } },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const chartPerceptibleCtx = document.getElementById('chartPerceptible');
+            if (chartPerceptibleCtx) {
+                new Chart(chartPerceptibleCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['A', 'B', 'C', 'D', 'E', 'F'],
+                        datasets: [{
+                            label: 'Value',
+                            data: [12, 19, 30, 5, 8, 22],
+                            backgroundColor: ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#6b7280', '#6366f1'],
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            tooltip: { callbacks: { title: tooltipTitleCallback } },
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { color: '#0D1B2A', font: { size: 10 } } },
+                            x: { ticks: { color: '#0D1B2A', font: { size: 10 } } }
+                        }
+                    }
+                });
+            }
+
+            const chartRedesignCtx = document.getElementById('chartRedesign');
+            if (chartRedesignCtx) {
+                new Chart(chartRedesignCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Bailout: Asset Purchasing', 'Personal Wealth', 'Bailout: Banks', 'Bailout: Cash', 'Budget Deficit', 'Food Yearly', 'Income Tax'].map(wrapLabels),
+                        datasets: [{
+                            label: 'Billions of Pounds',
+                            data: [400, 393, 289, 200, 175, 160, 152],
+                            backgroundColor: ['#778DA9', '#778DA9', '#778DA9', '#778DA9', '#F59E0B', '#778DA9', '#778DA9'],
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: 'y',
+                        plugins: {
+                            tooltip: { callbacks: { title: tooltipTitleCallback } },
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { ticks: { color: '#0D1B2A', font: { size: 10 } }, grid: { display: false } },
+                            x: { ticks: { color: '#0D1B2A', font: { size: 10 } }, grid: { color: '#E0E1DD' } }
+                        }
+                    }
+                });
+            }
+
+            // From data-viz-art-science.html
+            const artAccentBlue = '#415A77';
+            const artAccentGreen = '#10B981';
+            const artAccentRed = '#EF4444';
+            const artAccentPurple = '#a78bfa';
+            const artAccentGray = '#778DA9';
+            const artGridColor = '#E0E1DD';
+            const artTextColor = '#1f2937';
+
+            Chart.defaults.color = artTextColor;
+            Chart.defaults.borderColor = artGridColor;
+
+            const barLabelsArt = wrapLabels(['Category A', 'Category B']);
+
+            if (document.getElementById('chartScienceBad')) {
+                new Chart(document.getElementById('chartScienceBad'), {
+                    type: 'bar',
+                    data: {
+                        labels: barLabelsArt,
+                        datasets: [{
+                            label: 'Value',
+                            data: [100, 80],
+                            backgroundColor: [artAccentRed, artAccentGray],
+                            borderWidth: 0,
+                            barPercentage: 0.8,
+                            categoryPercentage: 0.7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            tooltip: { callbacks: { title: tooltipTitleCallback } },
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                min: 50,
+                                grid: { display: false },
+                                ticks: { color: artTextColor, font: { size: 12 } }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: artTextColor, font: { size: 12 } }
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (document.getElementById('chartScienceGood')) {
+                new Chart(document.getElementById('chartScienceGood'), {
+                    type: 'bar',
+                    data: {
+                        labels: barLabelsArt,
+                        datasets: [{
+                            label: 'Value',
+                            data: [100, 80],
+                            backgroundColor: [artAccentBlue, artAccentGreen],
+                            borderWidth: 0,
+                            barPercentage: 0.8,
+                            categoryPercentage: 0.7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            tooltip: { callbacks: { title: tooltipTitleCallback } },
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: artGridColor },
+                                ticks: { color: artTextColor, font: { size: 12 } }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: artTextColor, font: { size: 12 } }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const lineLabelsArt = wrapLabels(['Q1', 'Q2', 'Q3', 'Q4']);
+            const lineDataArt = {
+                labels: lineLabelsArt,
+                datasets: [
+                    {
+                        label: 'Competitor A',
+                        data: [45, 50, 60, 62],
+                        borderColor: artAccentGray,
+                        backgroundColor: 'transparent',
+                        tension: 0.3,
+                        borderWidth: 2
+                    },
+                    {
+                        label: 'Competitor B',
+                        data: [30, 42, 48, 55],
+                        borderColor: artAccentGray,
+                        backgroundColor: 'transparent',
+                        tension: 0.3,
+                        borderWidth: 2
+                    },
+                    {
+                        label: 'Our Growth',
+                        data: [20, 35, 60, 80],
+                        borderColor: artAccentGray,
+                        backgroundColor: 'transparent',
+                        tension: 0.3,
+                        borderWidth: 2
+                    }
+                ]
+            };
+
+            if (document.getElementById('chartArtBad')) {
+                new Chart(document.getElementById('chartArtBad'), {
+                    type: 'line',
+                    data: JSON.parse(JSON.stringify(lineDataArt)),
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            tooltip: { callbacks: { title: tooltipTitleCallback } },
+                            legend: { position: 'bottom', labels: { color: artTextColor } }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: artGridColor }, ticks: { color: artTextColor, font: {size: 10} } },
+                            x: { grid: { display: false }, ticks: { color: artTextColor, font: {size: 10} } }
+                        }
+                    }
+                });
+            }
+
+            if (document.getElementById('chartArtGood')) {
+                const goodLineData = JSON.parse(JSON.stringify(lineDataArt));
+                goodLineData.datasets[2].borderColor = artAccentBlue;
+                goodLineData.datasets[2].borderWidth = 4;
+
+                new Chart(document.getElementById('chartArtGood'), {
+                    type: 'line',
+                    data: goodLineData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            tooltip: { callbacks: { title: tooltipTitleCallback } },
+                            legend: { position: 'bottom', labels: { color: artTextColor } }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: artGridColor }, ticks: { color: artTextColor, font: {size: 10} } },
+                            x: { grid: { display: false }, ticks: { color: artTextColor, font: {size: 10} } }
+                        }
+                    }
+                });
+            }
+
+            if (document.getElementById('chartJunk')) {
+                new Chart(document.getElementById('chartJunk'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Actual Data', 'Chart Junk'],
+                        datasets: [{
+                            label: 'Percentage',
+                            data: [30, 70], // Actual Data: 30%, Chart Junk: 70%
+                            backgroundColor: [
+                                'rgba(65, 90, 119, 0.8)', // accent-blue
+                                'rgba(239, 68, 68, 0.8)'  // accent-red
+                            ],
+                            borderColor: [
+                                artAccentBlue,
+                                artAccentRed
+                            ],
+                            borderWidth: 2,
+                            borderRadius: 5,
+                            barPercentage: 0.7,
+                            categoryPercentage: 0.6
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y', // Make it a horizontal bar chart
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        ...tooltipTitleCallbackPercent,
+                        layout: {
+                            padding: { left: 10, right: 10, top: 10, bottom: 10 }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                max: 100,
+                                title: {
+                                    display: false,
+                                },
+                                grid: {
+                                    color: 'rgba(119, 141, 169, 0.3)', // accent-light
+                                    borderDash: [5, 5]
+                                },
+                                ticks: {
+                                    color: artTextColor,
+                                    callback: function(value) { return value + '%'; },
+                                    font: {size: 10}
+                                }
+                            },
+                            y: {
+                                grid: { display: false },
+                                ticks: {
+                                    color: artTextColor,
+                                    font: { size: 12, weight: 'bold' }
+                                }
+                            }
+                        },
+                        plugins: {
+                            ...tooltipTitleCallbackPercent.plugins,
+                            title: {
+                                display: false,
+                            },
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
+
+
