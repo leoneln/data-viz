@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data, Decisions, and Responsibility: The Challenger Case</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f3f8;
+            color: #616161;
+            overflow: hidden; 
+        }
+        body::before {
+            content: "";
+            background: radial-gradient(at 25% 25%, #e0f2ff 0, rgba(240, 243, 248, .2) 35%, #f0f3f8 60%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+        }
+        #scroll-container {
+            height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-snap-type: y mandatory;
+        }
+        .full-page-section {
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            position: relative;
+        }
+        .content-card {
+            background-color: #ffffff;
+            border-bottom: 2px solid #3476f2;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            max-height: calc(90vh - 2rem);
+            overflow-y: auto;
+        }
+        @media (min-width: 768px) {
+            .content-card {
+                padding: 2rem;
+            }
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 30vh;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 40vh;
+                max-height: 450px;
+            }
+        }
+        .flow-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        @media (min-width: 768px) {
+            .flow-diagram {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+        .flow-path {
+            flex: 1;
+            border: 1px solid #e0e0e0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            background-color: #f9f9f9;
+        }
+        .flow-box {
+            background-color: #ffffff;
+            border: 1px solid #cccccc;
+            border-radius: 0.375rem;
+            padding: 0.75rem;
+            text-align: center;
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+        .flow-arrow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            color: #999999;
+            margin: 0.5rem 0;
+            transform: rotate(90deg);
+        }
+        @media (min-width: 768px) {
+            .flow-arrow {
+                transform: rotate(0deg);
+                margin: 0 1rem;
+            }
+        }
+        .flow-path-horizontal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+         @media (min-width: 768px) {
+            .flow-path-horizontal {
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+        .flow-box-warning {
+            background-color: #fffbeb;
+            border-color: #f2b734;
+            color: #7a5c10;
+        }
+        .flow-box-success {
+            background-color: #f0fefa;
+            border-color: #34f276;
+            color: #0e6b2e;
+        }
+        .question-box {
+            background-color: #f4f8ff;
+            border-left: 4px solid #3476f2;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            border-radius: 0 0.375rem 0.375rem 0;
+            color: #616161;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #1a1a1a;
+        }
+        h2 {
+            color: #3476f2;
+        }
+        .question-box h3 {
+            color: #1a1a1a;
+        }
+        
+        .scroll-down-arrow {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            width: 24px;
+            height: 24px;
+            border-left: 2px solid #3476f2;
+            border-bottom: 2px solid #3476f2;
+            transform: translateX(-50%) rotate(-45deg);
+            opacity: 0.7;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) rotate(-45deg) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) rotate(-45deg) translateY(-10px);
+            }
+            60% {
+                transform: translateX(-50%) rotate(-45deg) translateY(-5px);
+            }
+        }
+        .citation-list {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin-top: 1rem;
+            color: #616161;
+        }
+        .citation-list li {
+            margin-bottom: 0.75rem;
+        }
+        .citation-list a {
+            color: #3476f2;
+            text-decoration: none;
+        }
+        .citation-list a:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body class="antialiased">
+
+    <div id="scroll-container">
+
+        <section class="full-page-section">
+            <div class="content-card text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4" style="color: #3476f2;">Data, Decisions, and Designer Responsibility</h1>
+                <p class="text-xl md:text-2xl text-gray-700">A Case Study on the Space Shuttle Challenger</p>
+                <p class="text-lg text-gray-500 mt-8">An interactive analysis based on the work of Edward Tufte.</p>
+            </div>
+            <div class="scroll-down-arrow"></div>
+        </section>
+
+        <section class="full-page-section">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-4">The Premise: The Weight of a Single Chart</h2>
+                <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                    On January 28, 1986, the Space Shuttle <i>Challenger</i> broke apart 73 seconds into its flight. The night before, engineers presented data suggesting that O-rings, critical seals in the rocket boosters, could fail at low temperatures. Their presentation, however, failed to convince NASA officials to delay the launch.
+                </p>
+                <p class="text-lg text-gray-700 leading-relaxed">
+                    This tragedy serves as a powerful case study in communication. Data visualization pioneer Edward Tufte highlighted that the data <i>showing</i> the danger existed, but the <i>design</i> of its presentation was ineffective. This isn't to lay blame on a single chart, but to explore the immense responsibility we hold as designers and analysts when visualizing high-stakes data.
+                </p>
+                <div class="question-box">
+                    <h3 class="text-xl font-semibold mb-2">Discussion Point</h3>
+                    <p>What is the primary role of a data visualization in a high-stakes decision? Is it to simply "show the data," or is it to make an argument and guide understanding?</p>
+                </div>
+            </div>
+            <div class="scroll-down-arrow"></div>
+        </section>
+
+        <section class="full-page-section">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-4">Section 1: The Challenge of Encoding: Chronology vs. Causality</h2>
+                <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                    The charts presented by engineers were organized by mission launch order (chronology). This design choice scattered the crucial data points about O-ring damage across 13 different charts, making it impossible to see the single most important relationship: the link between <i>temperature</i> and <i>damage</i>.
+                </p>
+                
+                <div class="chart-container">
+                    <canvas id="originalChart"></canvas>
+                </div>
+
+                <div class="mt-4">
+                    <h3 class="text-2xl font-semibold mb-2" style="color: #1a1a1a;">Analysis: The Impact of Encoding</h3>
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        This chart plots O-ring damage against mission number. The x-axis (chronology) has no causal relationship to the damage. By encoding the data this way, the chart buries the key insight in a jumble of disconnected facts. The design choice actively obscures the relationship it needed to reveal.
+                    </p>
+                </div>
+
+                <div class="question-box">
+                    <h3 class="text-xl font-semibold mb-2">Discussion Point</h3>
+                    <p>What are the consequences of choosing a non-causal variable (like mission number) for your main axis? How does this "encoding" choice shape the entire conversation?</p>
+                </div>
+            </div>
+            <div class="scroll-down-arrow"></div>
+        </section>
+        
+        <section class="full-page-section">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-4">Section 2: Isolating the Causal Variable</h2>
+                <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                    The single most important variable was <i>temperature</i>. When we re-organize the data to compare flights <i>with</i> damage to flights <i>without</i> damage, a pattern begins to emerge. This is a crucial step in "scaffolding" the data—structuring it to help the audience compare the right groups.
+                </p>
+                
+                <div class="chart-container">
+                    <canvas id="tempComparisonChart"></canvas>
+                </div>
+
+                <div class="mt-4">
+                    <h3 class="text-2xl font-semibold mb-2" style="color: #1a1a1a;">Analysis: A Clearer Signal</h3>
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        This chart shows a stark difference. The average launch temperature for missions <i>with</i> O-ring damage was significantly lower. This strongly suggests temperature is the key. However, it still oversimplifies by showing an average, not the full, detailed distribution of risk.
+                    </p>
+                </div>
+
+                <div class="question-box">
+                    <h3 class="text-xl font-semibold mb-2">Discussion Point</h3>
+                    <p>This bar chart is a good step, but what information is it still hiding by using an average? When is a summary helpful, and when is it dangerously simplistic?</p>
+                </div>
+            </div>
+            <div class="scroll-down-arrow"></div>
+        </section>
+
+        <section class="full-page-section">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-4">Section 3: A Design for Clarity: The Scatter Plot</h2>
+                <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                    Tufte's proposed solution was a single, simple chart: a scatter plot. This design plots all 24 previous launches, showing launch temperature (x-axis) vs. O-ring damage (y-axis). This choice presents the complete, un-simplified picture of the risk.
+                </p>
+                
+                <div class="chart-container">
+                    <canvas id="tufteScatterPlot"></canvas>
+                </div>
+
+                <div class="mt-6 p-4 rounded-lg" style="background-color: #fffbeb; border: 1px solid #f2b734;">
+                    <h3 class="text-2xl font-semibold mb-2" style="color: #7a5c10;">The Missing Data Point: The Challenger Forecast</h3>
+                    <p class="text-lg text-gray-800 leading-relaxed" style="color: #7a5c10;">
+                        The forecast for the <i>Challenger</i> launch was <strong>26° to 29°F</strong>. This temperature was completely off this chart—far below any previous launch, deep in the high-risk zone.
+                    </p>
+                </div>
+
+                <div class="mt-4">
+                    <h3 class="text-2xl font-semibold mb-2" style="color: #1a1a1a;">Analysis: The Power of a Causal Display</h3>
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        This single scatter plot reveals several critical truths that were hidden before:
+                    </p>
+                    <ul class="list-disc list-inside mt-2 space-y-1 text-lg text-gray-700">
+                        <li><strong>Clear Trend:</strong> All damage occurred at 63°F or below.</li>
+                        <li><strong>"Safe" Zone:</strong> No damage occurred above 65°F.</li>
+                        <li><strong>The Real Risk:</strong> There was <strong>zero</strong> data for launches below 53°F.</li>
+                    </ul>
+                </div>
+
+                <div class="question-box">
+                    <h3 class="text-xl font-semibold mb-2">Discussion Point</h3>
+                    <p>Why is a scatter plot the most effective <i>design choice</i> for this specific problem? How does it use encoding, scaffolding, and perception to make an undeniable argument?</p>
+                </div>
+            </div>
+            <div class="scroll-down-arrow"></div>
+        </section>
+
+        <section class="full-page-section">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-4">Section 4: The Weight of Design: Two Paths to a Decision</h2>
+                <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                    The <i>Challenger</i> story is a powerful case study in communication. It highlights the immense responsibility of data design. A visualization is not a passive picture; it is an active argument and a critical tool for thinking that can guide a decision down two very different paths.
+                </p>
+
+                <div class="flow-diagram">
+                    <div class="flow-path">
+                        <h3 class="text-xl font-semibold text-center mb-4" style="color: #1a1a1a;">Path 1: Obscured Data (What Happened)</h3>
+                        <div class="flow-path-horizontal">
+                            <div class="flow-box">Cluttered Data</div>
+                            <div class="flow-arrow">&rarr;</div>
+                            <div class="flow-box">Confusing Encoding</div>
+                            <div class="flow-arrow">&rarr;</div>
+                            <div class="flow-box">Failed Perception</div>
+                        </div>
+                        <div class="flow-arrow">&darr;</div>
+                        <div class="flow-box">Misunderstanding</div>
+                        <div class="flow-arrow">&darr;</div>
+                        <div class="flow-box flow-box-warning">Disaster</div>
+                    </div>
+
+                    <div class="flow-path">
+                        <h3 class="text-xl font-semibold text-center mb-4" style="color: #1a1a1a;">Path 2: Clear Visualization (What Could Have Been)</h3>
+                        <div class="flow-path-horizontal">
+                            <div class="flow-box">Organized Data</div>
+                            <div class="flow-arrow">&rarr;</div>
+                            <div class="flow-box">Causal Encoding</div>
+                            <div class="flow-arrow">&rarr;</div>
+                            <div class="flow-box">Clear Perception</div>
+                        </div>
+                        <div class="flow-arrow">&darr;</div>
+                        <div class="flow-box">Insight & Understanding</div>
+                        <div class="flow-arrow">&darr;</div>
+                        <div class="flow-box flow-box-success">Informed Decision</div>
+                    </div>
+                </div>
+
+                <div class="question-box">
+                    <h3 class="text-xl font-semibold mb-2">Final Question</h3>
+                    <p>As future data analysts, designers, and decision-makers, what is our ethical responsibility when we are presenting data? How can we ensure our design choices empower understanding, not obscure it?</p>
+                </div>
+            </div>
+            <div class="scroll-down-arrow"></div>
+        </section>
+
+        <section class="full-page-section">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-4">Works Cited & Further Reading</h2>
+                <p class="text-lg text-gray-700 leading-relaxed">
+                    This analysis is built on the foundational work of several authors and reports. We encourage you to explore them directly.
+                </p>
+                <ul class="citation-list">
+                    <li>
+                        Tufte, Edward R. (1997). "Visual and Statistical Thinking: Displays of Evidence for Decision Making." 
+                        <a href="https://williamwolff.org/wp-content/uploads/2013/01/tufte-challenger-1997.pdf" target="_blank" rel="noopener noreferrer">williamwolff.org</a>.
+                        <p class="text-sm text-gray-500">The primary essay this infographic is based on.</p>
+                    </li>
+                    <li>
+                        Tufte, Edward R. (1997). <i>Visual Explanations: Images and Quantities, Evidence and Narrative</i>. Graphics Press.
+                        <p class="text-sm text-gray-500">The book chapter that expands on this concept.</p>
+                    </li>
+                    <li>
+                        Rogers Commission (1986). "Report of the Presidential Commission on the Space Shuttle Challenger Accident."
+                        <a href="https://history.nasa.gov/rogersrep/genindex.htm" target="_blank" rel="noopener noreferrer">NASA History Office</a>.
+                        <p class="text-sm text-gray-500">The official government report on the disaster.</p>
+                    </li>
+                    <li>
+                        Nieto, Leonardo. "Week 2 - Designing for Perception How Charts Communicate Information." 
+                        <p class="text-sm text-gray-500">Course lecture material provided for this class.</p>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        window.onload = () => {
+            
+            const colors = {
+                primary: '#3476f2',
+                secondary: '#a0c3ff',
+                warning: '#f2b734',
+                text: '#616161',
+                heading: '#1a1a1a',
+                grid: '#e0e0e0'
+            };
+
+            const tooltipPlugin = {
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) {
+                                  return label.join(' ');
+                                } else {
+                                  return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            
+            const chartFontOptions = {
+                color: colors.text,
+                font: {
+                    family: "'Inter', sans-serif"
+                }
+            };
+
+            const chartTitleOptions = {
+                color: colors.heading,
+                font: {
+                    family: "'Inter', sans-serif",
+                    size: 16,
+                    weight: '600'
+                }
+            };
+
+            createOriginalChart();
+            createTempComparisonChart();
+            createTufteScatterPlot();
+
+            function createOriginalChart() {
+                const ctx = document.getElementById('originalChart').getContext('2d');
+                if (!ctx) return;
+                
+                const originalChartData = {
+                    labels: ['STS-1', 'STS-2', '41-B', '41-C', '41-D', '41-G', '51-A', '51-C', '51-D', '51-B', '51-G', '61-A', '61-C'],
+                    datasets: [{
+                        label: 'O-Ring Incidents',
+                        data: [0, 1, 0, 1, 0, 0, 0, 5, 1, 3, 0, 1, 2],
+                        backgroundColor: colors.secondary,
+                        borderColor: colors.primary,
+                        borderWidth: 1
+                    }]
+                };
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: originalChartData,
+                    options: {
+                        maintainAspectRatio: false,
+                        responsive: true,
+                        plugins: {
+                            ...tooltipPlugin.plugins,
+                            title: {
+                                display: true,
+                                text: 'O-Ring Incidents by Mission (Chronological Order)',
+                                color: chartTitleOptions.color,
+                                font: chartTitleOptions.font
+                            },
+                            legend: {
+                                display: false,
+                                labels: chartFontOptions
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Shuttle Mission (Non-Causal Variable)',
+                                    color: chartFontOptions.color
+                                },
+                                ticks: chartFontOptions,
+                                grid: { color: 'transparent' }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Number of Incidents',
+                                    color: chartFontOptions.color
+                                },
+                                beginAtZero: true,
+                                ticks: chartFontOptions,
+                                grid: { color: colors.grid }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function createTempComparisonChart() {
+                const ctx = document.getElementById('tempComparisonChart').getContext('2d');
+                if (!ctx) return;
+
+                const tempComparisonData = {
+                    labels: ['Average Launch Temp °F'],
+                    datasets: [
+                        {
+                            label: 'No Damage Incidents',
+                            data: [75.3],
+                            backgroundColor: colors.primary,
+                            borderColor: '#2a5ec1',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Damage Incidents',
+                            data: [62.9],
+                            backgroundColor: colors.warning,
+                            borderColor: '#B38F1D',
+                            borderWidth: 1
+                        }
+                    ]
+                };
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: tempComparisonData,
+                    options: {
+                        maintainAspectRatio: false,
+                        responsive: true,
+                        plugins: {
+                            ...tooltipPlugin.plugins,
+                            title: {
+                                display: true,
+                                text: 'Average Launch Temperature Comparison',
+                                color: chartTitleOptions.color,
+                                font: chartTitleOptions.font
+                            },
+                            legend: {
+                                position: 'bottom',
+                                labels: chartFontOptions
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: chartFontOptions,
+                                grid: { color: 'transparent' }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Temperature °F',
+                                    color: chartFontOptions.color
+                                },
+                                beginAtZero: false,
+                                min: 50,
+                                ticks: chartFontOptions,
+                                grid: { color: colors.grid }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function createTufteScatterPlot() {
+                const ctx = document.getElementById('tufteScatterPlot').getContext('2d');
+                if (!ctx) return;
+
+                const damageData = [
+                    { x: 53, y: 5 }, { x: 57, y: 3 }, { x: 58, y: 1 }, { x: 63, y: 1 }, { x: 70, y: 2 }, { x: 75, y: 2 }
+                ];
+
+                const noDamageData = [
+                    { x: 66, y: 0 }, { x: 67, y: 0 }, { x: 67, y: 0 }, { x: 68, y: 0 }, { x: 69, y: 0 },
+                    { x: 70, y: 0 }, { x: 70, y: 0 }, { x: 72, y: 0 }, { x: 73, y: 0 }, { x: 75, y: 0 },
+                    { x: 76, y: 0 }, { x: 76, y: 0 }, { x: 78, y: 0 }, { x: 79, y: 0 }, { x: 80, y: 0 }, { x: 81, y: 0 }
+                ];
+                
+                new Chart(ctx, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [
+                            {
+                                label: 'Damage Incident',
+                                data: damageData,
+                                backgroundColor: colors.warning,
+                                borderColor: '#B38F1D',
+                                pointRadius: 6,
+                                pointHoverRadius: 8
+                            },
+                            {
+                                label: 'No Damage',
+                                data: noDamageData,
+                                backgroundColor: colors.primary,
+                                borderColor: '#2a5ec1',
+                                pointRadius: 6,
+                                pointHoverRadius: 8
+                            }
+                        ]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'O-Ring Damage vs. Launch Temperature (All 24 Flights)',
+                                color: chartTitleOptions.color,
+                                font: chartTitleOptions.font
+                            },
+                            legend: {
+                                position: 'bottom',
+                                labels: chartFontOptions
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        label += `(${context.parsed.x}°F, ${context.parsed.y} Damage Index)`;
+                                        return label;
+                                    },
+                                    title: function() { return ''; }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                type: 'linear',
+                                position: 'bottom',
+                                title: {
+                                    display: true,
+                                    text: 'Temperature at Launch (°F)',
+                                    color: chartFontOptions.color,
+                                    font: { size: 14, family: "'Inter', sans-serif" }
+                                },
+                                min: 50,
+                                max: 85,
+                                ticks: chartFontOptions,
+                                grid: { color: colors.grid }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'O-Ring Damage Index',
+                                    color: chartFontOptions.color,
+                                    font: { size: 14, family: "'Inter', sans-serif" }
+                                },
+                                beginAtZero: true,
+                                min: 0,
+                                ticks: chartFontOptions,
+                                grid: { color: colors.grid }
+                            }
+                        }
+                    }
+                });
+            }
+        };
+    </script>
+</body>
+</html>
