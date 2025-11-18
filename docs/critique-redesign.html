@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peer Activity: Tufte-Minimalist Charts</title>
+    <!-- Google Font: Lato for a clean, minimalist, Tufte-like feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chart.js for rendering the charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+/* 1. THE SETUP */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f3f4f6;
+  margin: 0;
+  padding: 0;
+  font-family: 'Lato', sans-serif;
+  color: #374151;
+}
+
+header {
+    background-color: #4f46e5;
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+header h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 48px;
+    margin: 0;
+}
+
+header p {
+    font-size: 24px;
+    opacity: 0.9;
+    margin-top: 10px;
+}
+
+.instructions-container {
+    max-width: 64rem; /* 5xl in Tailwind. You correctly spotted the error 'max-w-5xl;'. */
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.instructions-container h2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 32px;
+    color: #1f2937;
+    margin-top: 0;
+}
+
+.instructions-container .prompt {
+    font-size: 18px;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 25px;
+    line-height: 1.6;
+}
+.instructions-container ul {
+    list-style-type: disc;
+    margin: 20px 0 0 30px;
+}
+.instructions-container li {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.chart-gallery {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 0 20px 40px 20px;
+    max-width: 80rem; /* 7xl in Tailwind. Corrected from 'max-w-7xl;'. Good catch! */
+    margin: 0 auto;
+}
+
+.chart-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chart-card h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+  padding: 20px 20px 0 20px;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.chart-canvas-container {
+    padding: 20px;
+    height: 450px;
+    position: relative;
+}
+
+/* Dashboard Layouts */
+.dashboard {
+    display: grid;
+    gap: 20px;
+    padding: 20px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+}
+
+.dash-item {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.dash-item h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-top: 0;
+    margin-bottom: 15px;
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+}
+
+.dash-item .canvas-container {
+    flex-grow: 1;
+    position: relative;
+    height: 300px;
+}
+
+.kpi-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.kpi-value {
+    font-size: 56px;
+    font-weight: 700;
+    color: #4b5563;
+    line-height: 1.2;
+    font-family: 'Poppins', sans-serif;
+}
+.kpi-label {
+    font-size: 18px;
+    color: #6b7280;
+}
+
+.dash-item.span-col-2 {
+    grid-column: span 2;
+}
+
+.dash-item.span-row-2 {
+    grid-row: span 2;
+}
+
+/* Make dashboards responsive */
+@media (max-width: 768px) {
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+    .dash-item.span-row-2 {
+        grid-row: auto;
+    }
+}
+
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Peer Activity: Critique & Redesign</h1>
+    <p>Applying Functional Aesthetics to Minimalist Charts</p>
+</header>
+
+<div class="instructions-container">
+    <h2>Your Task</h2>
+    <div class="prompt">
+        <p>The following charts are "boring" but correct. They follow Tufte's principles of minimalism (high data-to-ink ratio, no "chartjunk").</p>
+        <p style="margin-top: 15px;">However, they are not *engaging* and don't clearly *tell a story*.</p>
+        <br>
+        <strong>As a group, discuss each chart:</strong>
+        <ul>
+            <li>How could you apply "functional aesthetics" *without* adding "chartjunk"?</li>
+            <li>What is <strong>one change</strong> (e.g., a narrative title, a single accent color, a bolded line, a callout box) that would make it more engaging *and* clearer?</li>
+        </ul>
+    </div>
+</div>
+
+<main class="chart-gallery">
+
+    <!-- Chart 1: Line Chart -->
+    <div class="chart-card" id="chart1-card">
+        <h2>Chart 1: Global CO2 Emissions, 1960-2020</h2>
+        <div class="chart-canvas-container">
+            <canvas id="chart1"></canvas>
+        </div>
+    </div>
+
+    <!-- Chart 2: Bar Chart -->
+    <div class="chart-card" id="chart2-card">
+        <h2>Chart 2: Most Populous Countries, 2023</h2>
+        <div class="chart-canvas-container">
+            <canvas id="chart2"></canvas>
+        </div>
+    </div>
+
+    <!-- Chart 3: Stacked Bar Chart -->
+    <div class="chart-card" id="chart3-card">
+        <h2>Chart 3: U.S. Energy Consumption by Source (% Total)</h2>
+        <div class="chart-canvas-container">
+            <canvas id="chart3"></canvas>
+        </div>
+    </div>
+
+    <!-- Chart 4: Scatter Plot -->
+    <div class="chart-card" id="chart4-card">
+        <h2>Chart 4: Global Health: GDP per Capita vs. Life Expectancy</h2>
+        <div class="chart-canvas-container">
+            <canvas id="chart4"></canvas>
+        </div>
+    </div>
+
+    <!-- Chart 5: Pie Chart -->
+    <div class="chart-card" id="chart5-card">
+        <h2>Chart 5: Global Smartphone Market Share, Q2 2023</h2>
+        <div class="chart-canvas-container" style="max-height: 500px;">
+            <canvas id="chart5"></canvas>
+        </div>
+    </div>
+
+    <!-- Chart 6: Grouped Bar Chart -->
+    <div class="chart-card" id="chart6-card">
+        <h2>Chart 6: Social Media Platform Use by Age Group (U.S.)</h2>
+        <div class="chart-canvas-container">
+            <canvas id="chart6"></canvas>
+        </div>
+    </div>
+
+    <!-- Chart 7: Horizontal Bar Chart -->
+    <div class="chart-card" id="chart7-card">
+        <h2>Chart 7: Top 5 Causes of Project Delays</h2>
+        <div class="chart-canvas-container">
+            <canvas id="chart7"></canvas>
+        </div>
+    </div>
+
+    <!-- Chart 8: Multi-Line Chart -->
+    <div class="chart-card" id="chart8-card">
+        <h2>Chart 8: Housing Prices: Median Sale Price vs. 30-Year Mortgage Rate</h2>
+        <div class="chart-canvas-container">
+            <canvas id="chart8"></canvas>
+        </div>
+    </div>
+
+    <!-- Dashboard 1: Sales -->
+    <div class="chart-card" id="dash1-card">
+        <h2>Dashboard 1: Q4 Sales Dashboard</h2>
+        <div class="dashboard">
+            <div class="dash-item span-row-2">
+                <h3>Sales by Region (USD)</h3>
+                <div class="canvas-container" style="height: 350px;">
+                    <canvas id="dash1_chart1"></canvas>
+                </div>
+            </div>
+    
+            <div class="dash-item">
+                <h3>Revenue Trend 2023 (USD)</h3>
+                <div class="canvas-container" style="height: 200px;">
+                    <canvas id="dash1_chart2"></canvas>
+                </div>
+            </div>
+    
+            <div class="dash-item">
+                <h3>Key Metrics</h3>
+                <div class="kpi-container">
+                    <div class="kpi-value">$1.2M</div>
+                    <div class="kpi-label">Total Revenue</div>
+                    <div class="kpi-value" style="margin-top: 20px;">15.4%</div>
+                    <div class="kpi-label">Profit Margin</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard 2: Web Analytics -->
+    <div class="chart-card" id="dash2-card">
+        <h2>Dashboard 2: Monthly Web Analytics Dashboard</h2>
+        <div class="dashboard">
+            <div class="dash-item">
+                <h3>Traffic Sources</h3>
+                <div class="canvas-container">
+                    <canvas id="dash2_chart1"></canvas>
+                </div>
+            </div>
+    
+            <div class="dash-item">
+                <h3>Bounce Rate Over Time</h3>
+                <div class="canvas-container">
+                    <canvas id="dash2_chart2"></canvas>
+                </div>
+            </div>
+    
+            <div class="dash-item span-col-2">
+                <h3>Users by Device Type</h3>
+                <div class="canvas-container" style="height: 250px;">
+                    <canvas id="dash2_chart3"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<script>
+// --- Tufte-inspired Chart.js Options ---
+// This is the "boring" minimalist theme for all charts
+const tufteOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    font: {
+        family: 'Lato',
+        size: 14,
+        weight: 400
+    },
+    plugins: {
+        legend: {
+            position: 'top',
+            labels: {
+                font: {
+                    size: 14,
+                    family: 'Lato'
+                },
+                color: '#374151'
+            }
+        },
+        tooltip: {
+            enabled: true,
+            backgroundColor: '#1f2937',
+            titleFont: {
+                size: 16,
+                family: 'Lato',
+                weight: 700
+            },
+            bodyFont: {
+                size: 14,
+                family: 'Lato'
+            }
+        }
+    },
+    scales: {
+        x: {
+            grid: {
+                display: false
+            },
+            ticks: {
+                color: '#4b5563',
+                font: { size: 12, family: 'Lato' }
+            },
+            border: {
+                color: '#d1d5db'
+            }
+        },
+        y: {
+            grid: {
+                color: '#e5e7eb',
+                borderDash: [5, 5]
+            },
+            ticks: {
+                color: '#4b5563',
+                font: { size: 12, family: 'Lato' }
+            },
+            border: {
+                display: false
+            }
+        }
+    }
+};
+
+const tufteColor = '#6b7280'; // Muted gray-blue
+const tufteColors = ['#6b7280', '#9ca3af', '#d1d5db', '#4b5563', '#374151', '#e5e7eb'];
+
+// --- Chart 1: Line Chart ---
+new Chart(document.getElementById('chart1'), {
+    type: 'line',
+    data: {
+        labels: ['1960', '1970', '1980', '1990', '2000', '2010', '2020'],
+        datasets: [{
+            label: 'Billion Tonnes of CO2',
+            data: [9.4, 14.9, 19.3, 22.6, 25.0, 31.4, 34.8],
+            borderColor: tufteColor,
+            backgroundColor: 'rgba(107, 114, 128, 0.1)',
+            fill: true,
+            tension: 0.1
+        }]
+    },
+    options: { ...tufteOptions, plugins: { legend: { display: false } } }
+});
+
+// --- Chart 2: Bar Chart ---
+new Chart(document.getElementById('chart2'), {
+    type: 'bar',
+    data: {
+        labels: ['India', 'China', 'United States', 'Indonesia', 'Pakistan'],
+        datasets: [{
+            label: 'Population (in Billions)',
+            data: [1.428, 1.425, 0.340, 0.277, 0.240],
+            backgroundColor: tufteColor
+        }]
+    },
+    options: { ...tufteOptions, plugins: { legend: { display: false } } }
+});
+
+// --- Chart 3: Stacked Bar Chart ---
+new Chart(document.getElementById('chart3'), {
+    type: 'bar',
+    data: {
+        labels: ['1980', '2020'],
+        datasets: [
+            { label: 'Petroleum', data: [45, 35], backgroundColor: tufteColors[0] },
+            { label: 'Natural Gas', data: [27, 34], backgroundColor: tufteColors[1] },
+            { label: 'Coal', data: [20, 11], backgroundColor: tufteColors[3] },
+            { label: 'Renewables', data: [6, 12], backgroundColor: tufteColors[2] },
+            { label: 'Nuclear', data: [3, 8], backgroundColor: tufteColors[5] }
+        ]
+    },
+    options: { ...tufteOptions, scales: { ...tufteOptions.scales, x: { ...tufteOptions.scales.x, stacked: true }, y: { ...tufteOptions.scales.y, stacked: true, ticks: { ...tufteOptions.scales.y.ticks, callback: (v) => v + '%' } } } }
+});
+
+// --- Chart 4: Scatter Plot ---
+new Chart(document.getElementById('chart4'), {
+    type: 'scatter',
+    data: {
+        datasets: [{
+            label: 'Country',
+            data: [
+                {x: 1200, y: 62}, {x: 2500, y: 66}, {x: 4500, y: 70}, {x: 8000, y: 72},
+                {x: 15000, y: 74}, {x: 22000, y: 76}, {x: 35000, y: 79}, {x: 45000, y: 81},
+                {x: 60000, y: 82}, {x: 75000, y: 83}
+            ],
+            backgroundColor: tufteColor
+        }]
+    },
+    options: { ...tufteOptions, plugins: { legend: { display: false } }, scales: { ...tufteOptions.scales, x: { ...tufteOptions.scales.x, title: { display: true, text: 'GDP per Capita (USD)' } }, y: { ...tufteOptions.scales.y, title: { display: true, text: 'Life Expectancy (Years)' } } } }
+});
+
+// --- Chart 5: Pie Chart ---
+new Chart(document.getElementById('chart5'), {
+    type: 'pie',
+    data: {
+        labels: ['Samsung', 'Apple', 'Xiaomi', 'Oppo', 'Vivo', 'Other'],
+        datasets: [{
+            label: 'Market Share',
+            data: [20, 17, 13, 10, 8, 32],
+            backgroundColor: tufteColors
+        }]
+    },
+    options: { ...tufteOptions, scales: { x: { display: false }, y: { display: false } } }
+});
+
+// --- Chart 6: Grouped Bar Chart ---
+new Chart(document.getElementById('chart6'), {
+    type: 'bar',
+    data: {
+        labels: ['18-29', '30-49', '50-64', '65+'],
+        datasets: [
+            { label: 'Facebook', data: [70, 77, 73, 50], backgroundColor: tufteColors[0] },
+            { label: 'Instagram', data: [71, 48, 29, 13], backgroundColor: tufteColors[1] }
+        ]
+    },
+    options: { ...tufteOptions, scales: { ...tufteOptions.scales, y: { ...tufteOptions.scales.y, ticks: { ...tufteOptions.scales.y.ticks, callback: (v) => v + '%' } } } }
+});
+
+// --- Chart 7: Horizontal Bar Chart ---
+new Chart(document.getElementById('chart7'), {
+    type: 'bar',
+    data: {
+        labels: ['Poor Communication', 'Scope Creep', 'Unclear Requirements', 'Lack of Resources', 'Unrealistic Deadlines'],
+        datasets: [{
+            label: 'Responses (%)',
+            data: [55, 48, 42, 30, 25],
+            backgroundColor: tufteColor
+        }]
+    },
+    options: { ...tufteOptions, indexAxis: 'y', plugins: { legend: { display: false } } }
+});
+
+// --- Chart 8: Multi-Line Chart ---
+new Chart(document.getElementById('chart8'), {
+    type: 'line',
+    data: {
+        labels: ['2018', '2019', '2020', '2021', '2022', '2023'],
+        datasets: [
+            {
+                label: 'Median Sale Price (USD)',
+                data: [320, 335, 350, 410, 440, 430],
+                borderColor: tufteColors[0],
+                yAxisID: 'y',
+            },
+            {
+                label: '30-Year Mortgage Rate (%)',
+                data: [4.5, 3.9, 3.1, 3.0, 5.3, 6.8],
+                borderColor: tufteColors[1],
+                borderDash: [5, 5],
+                yAxisID: 'y1',
+            }
+        ]
+    },
+    options: { ...tufteOptions, 
+        scales: { 
+            ...tufteOptions.scales, 
+            y: { ...tufteOptions.scales.y, position: 'left', title: { display: true, text: 'Sale Price (USD)' }, ticks: { callback: (v) => '$' + v + 'K'} },
+            y1: { display: true, position: 'right', grid: { display: false }, title: { display: true, text: 'Mortgage Rate (%)' }, ticks: { callback: (v) => v + '%'} } 
+        } 
+    }
+});
+
+
+// --- Dashboard 1 ---
+new Chart(document.getElementById('dash1_chart1'), {
+    type: 'bar',
+    data: {
+        labels: ['N. America', 'Europe', 'APAC', 'LATAM', 'Africa'],
+        datasets: [{
+            label: 'Sales',
+            data: [520000, 310000, 250000, 90000, 30000],
+            backgroundColor: tufteColor
+        }]
+    },
+    options: { ...tufteOptions, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { grid: { display: true, color: '#e5e7eb' }, border: {display: false}, ticks: {font: {size: 10}} }, y: { grid: { display: false }, border: {display: false}, ticks: {font: {size: 10}} } } }
+});
+
+new Chart(document.getElementById('dash1_chart2'), {
+    type: 'line',
+    data: {
+        labels: ['Jan', 'Mar', 'May', 'Jul', 'Sep', 'Nov'],
+        datasets: [{
+            label: 'Revenue',
+            data: [80000, 95000, 110000, 105000, 120000, 140000],
+            borderColor: tufteColor,
+            tension: 0.1
+        }]
+    },
+    options: { ...tufteOptions, plugins: { legend: { display: false } }, scales: { x: { ticks: {font: {size: 10}} }, y: { ticks: {font: {size: 10}} } } }
+});
+
+// --- Dashboard 2 ---
+new Chart(document.getElementById('dash2_chart1'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Organic', 'Direct', 'Referral', 'Social'],
+        datasets: [{
+            data: [45, 25, 20, 10],
+            backgroundColor: tufteColors
+        }]
+    },
+    options: { ...tufteOptions, scales: { x: { display: false }, y: { display: false } } }
+});
+
+new Chart(document.getElementById('dash2_chart2'), {
+    type: 'line',
+    data: {
+        labels: ['Wk 1', 'Wk 2', 'Wk 3', 'Wk 4', 'Wk 5', 'Wk 6'],
+        datasets: [{
+            label: 'Bounce Rate',
+            data: [45, 42, 44, 38, 39, 35],
+            borderColor: tufteColor,
+            tension: 0.1
+        }]
+    },
+    options: { ...tufteOptions, plugins: { legend: { display: false } }, scales: { x: { ticks: {font: {size: 10}} }, y: { ...tufteOptions.scales.y, ticks: { ...tufteOptions.scales.y.ticks, callback: (v) => v + '%', font: {size: 10} } } } }
+});
+
+new Chart(document.getElementById('dash2_chart3'), {
+    type: 'bar',
+    data: {
+        labels: ['Mobile', 'Desktop', 'Tablet'],
+        datasets: [{
+            label: 'Users',
+            data: [120500, 45200, 8300],
+            backgroundColor: tufteColor
+        }]
+    },
+    options: { ...tufteOptions, plugins: { legend: { display: false } }, scales: { x: { ticks: {font: {size: 12}} }, y: { ticks: {font: {size: 12}} } } }
+});
+
+</script>
+</body>
+</html>
